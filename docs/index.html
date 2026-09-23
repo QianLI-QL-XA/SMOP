@@ -37,14 +37,14 @@
   .nav-links a:hover{background:var(--bg-soft);color:var(--accent-dark);text-decoration:none}
 
   /* ---------- hero ---------- */
-  header{background:var(--hero-bg);color:var(--hero-ink);min-height:100vh;display:flex;align-items:flex-start}
-  .hero{width:100%;max-width:none;padding:9vh clamp(32px,5vw,96px) 0;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(360px,.75fr);gap:clamp(40px,4vw,80px);align-items:center}
+  header{background:var(--hero-bg);color:var(--hero-ink);min-height:100vh;display:flex;align-items:center}
+  .hero{width:100%;max-width:none;padding:64px clamp(32px,5vw,96px);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(360px,.75fr);gap:clamp(40px,4vw,80px);align-items:center}
   .hero>div:first-child{display:flex;flex-direction:column;justify-content:center}
   .hero .kicker{font-family:var(--font-mono);font-size:14px;letter-spacing:.08em;color:#7FB5C2;text-transform:none;margin:0 0 20px;text-align:center}
-  .hero h1{font-size:clamp(44px,7.2vw,72px);line-height:1.05;margin:0 0 22px;font-weight:700;letter-spacing:-.5px;text-align:center}
+  .hero h1{font-size:clamp(88px,14.4vw,144px);line-height:1.02;margin:0 0 26px;font-weight:700;letter-spacing:-1px;text-align:center}
   .hero h1 .accent{color:#4FB8B2}
   .hero .sub{font-size:19.5px;line-height:1.8;color:var(--hero-soft);max-width:56ch;margin:0 auto 32px}
-  .hero .eq{display:block;width:fit-content;margin:0 auto 30px;background:rgba(255,255,255,.06);border:1px solid var(--hero-line);border-radius:8px;padding:14px 22px;font-family:var(--font-mono);font-size:24px;color:#DFEEF2}
+  .hero .eq{display:block;width:fit-content;max-width:100%;margin:0 auto 32px;background:rgba(255,255,255,.06);border:1px solid var(--hero-line);border-radius:10px;padding:18px 28px;font-family:var(--font-mono);font-size:clamp(30px,3.4vw,48px);line-height:1.25;color:#DFEEF2}
   .hero .ref{margin:0 auto 30px;font-size:15.5px;line-height:1.7;color:#9FB2BE;max-width:60ch}
   .hero .ref a{color:#7FD0CA}
   .badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
