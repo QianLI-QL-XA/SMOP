@@ -141,7 +141,7 @@ delta=1.02·‖A·x_true−b‖):
 | Interface | solve_bmop status | ‖Ax−b‖ vs δ | ‖x‖₁ (true 7.63) | iter | solve_lasso KKT |
 | --- | --- | --- | --- | --- | --- |
 | C++ core (T1–T5) | 0 converged | ≤δ | consistent | — | <1e-6 |
-| Python | 0 converged | 1.29e-01 ≈ 1.29e-01 | 7.586 | 7 | obj 3.44e-01 |
+| Python | 0 converged | 1.29e-01 ≈ 1.29e-01 | 7.586 | 7 | 6.26e-07 |
 | R | 0 converged | 1.292e-01 ≈ 1.292e-01 | 7.586 | 7 | 6.7e-07 |
 | MATLAB/Octave | 0 converged | 1.630e-01 ≈ 1.630e-01 | 8.648 | 7 | 6.6e-07 |
 
