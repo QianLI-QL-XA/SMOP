@@ -152,7 +152,6 @@
       <a href="#results">Results</a>
       <a href="#install">Install</a>
       <a href="#quickstart">Quickstart</a>
-      <a href="#citing">Citing</a>
     </div>
   </div>
 </nav>
@@ -528,12 +527,7 @@ print(lr$eta)           # 6.7e-07</code></pre>
 disp(lr.eta)            % 6.6e-07</code></pre>
     </div>
   </div>
-</section>
-
-<!-- ===== 视图：Citing ===== -->
-<section id="citing">
-  <div class="wrap">
-    <div class="sec-head"><span class="sec-no">05</span><h2>Citing SMOP</h2><span class="rule"></span></div>
+    <h3>Citing SMOP</h3>
     <p class="lead">If you use SMOP in your work, please cite the algorithm paper:</p>
     <div class="bib"><span class="k">@article</span>{LiSunYuan2024,
 &nbsp;&nbsp;<span class="k">author</span>&nbsp;&nbsp;= {Li, Qian and Sun, Defeng and Yuan, Yancheng},
@@ -552,8 +546,9 @@ disp(lr.eta)            % 6.6e-07</code></pre>
       <a href="https://paulyuanmath.github.io/" target="_blank" rel="noopener">Yancheng Yuan</a>
     </div>
     <p class="note" style="margin-top:14px">Also available as <code>CITATION.bib</code> in the repository root. License: MIT © 2026 Qian Li.</p>
-  </div>
 </section>
+
+
 
 <!-- ===== 视图：Footer ===== -->
 <footer>
@@ -655,8 +650,9 @@ disp(lr.eta)            % 6.6e-07</code></pre>
   }
 
   /* view routing: click a nav link to enter that page (hash-based), no scrolling */
-  var VIEWS = ['home','method','results','install','quickstart','citing'];
+  var VIEWS = ['home','method','results','install','quickstart'];
   function showView(id){
+    if (id === 'citing') id = 'quickstart';
     if (VIEWS.indexOf(id) < 0) id = 'home';
     VIEWS.forEach(function(v){
       var el = document.getElementById(v);
