@@ -34,6 +34,7 @@
   .brand svg{display:block}
   .nav-links{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
   .nav-links a{padding:6px 10px;border-radius:6px;color:var(--ink-soft);font-size:15.5px;font-weight:500}
+  .nav-links a.on{background:var(--bg-soft);color:var(--accent-dark);font-weight:600}
   .nav-links a:hover{background:var(--bg-soft);color:var(--accent-dark);text-decoration:none}
 
   /* ---------- hero ---------- */
@@ -141,7 +142,7 @@
 <!-- ===== 视图：导航 ===== -->
 <nav>
   <div class="nav-in">
-    <a class="brand" href="#top" style="text-decoration:none">
+    <a class="brand" href="#home" style="text-decoration:none">
       <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#0E7A76"/><path d="M9 22 L14 22 L14 14 L19 14 L19 22 L24 22" stroke="#F2F7F8" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="22" r="1.6" fill="#F2F7F8"/></svg>
       SMOP
     </a>
@@ -155,8 +156,8 @@
   </div>
 </nav>
 
-<!-- ===== 视图：Hero ===== -->
-<header id="top">
+<!-- ===== 视图：Home（导航页） ===== -->
+<header id="home">
   <div class="hero">
     <div>
       <p class="kicker">Header-only C++17 · Python / R / MATLAB interfaces · optional CUDA</p>
@@ -651,6 +652,24 @@ disp(lr.eta)            % 6.6e-07</code></pre>
     chart2.setOption(opt2);
     window.addEventListener('resize', function(){ chart2.resize(); });
   }
+
+  /* view routing: click a nav link to enter that page (hash-based), no scrolling */
+  var VIEWS = ['home','method','results','install','quickstart','citing'];
+  function showView(id){
+    if (VIEWS.indexOf(id) < 0) id = 'home';
+    VIEWS.forEach(function(v){
+      var el = document.getElementById(v);
+      if (el) el.style.display = (v === id) ? '' : 'none';
+    });
+    document.querySelectorAll('.nav-links a').forEach(function(a){
+      var t = (a.getAttribute('href') || '').replace(/^#/,'');
+      a.classList.toggle('on', t === id);
+    });
+    window.scrollTo(0,0);
+    if (id === 'results' && chart2) chart2.resize();
+  }
+  window.addEventListener('hashchange', function(){ showView(location.hash.replace('#','')); });
+  showView(location.hash.replace('#','') || 'home');
 })();
 </script>
 
