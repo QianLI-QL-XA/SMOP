@@ -1,0 +1,47 @@
+﻿# ---- build artifacts ----
+build/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.mex
+*.mexa64
+*.oct
+*.log
+*.bin
+*.out
+
+# ---- third-party (download Eigen 3.4.x into third_party/, see README) ----
+third_party/eigen-3.4.0/
+third_party/eigen/
+third_party/*.tar.gz
+
+# ---- data files (not redistributed; regenerate with tests/export_ucidata.py) ----
+tests/ucidata/
+tests/ucidata_logs/
+
+# ---- internal dev/debug tooling (kept locally, not published) ----
+devtools_archive/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+.eggs/
+.pip-wheel-metadata/
+
+# ---- R ----
+src/*.o
+src/*.so
+
+# ---- misc ----
+.vscode/ipch/
+*.swp
+.DS_Store
+Thumbs.db
+# ---- page self-check screenshots & local edit scripts (not published) ----
+docs/_shots/
+docs/_edit*.py
+docs/_backup/

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMOP — Level-Set Method for Sparse Optimization with Least-Squares Constraints</title>
+<meta name="description" content="SMOP: sieving-based secant level-set method for sparse optimization with a least-squares constraint. Header-only C++17 core with Python, R and MATLAB interfaces.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230E7A76'/%3E%3Cpath d='M9 22 L14 22 L14 14 L19 14 L19 22 L24 22' stroke='%23F2F7F8' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='24' cy='22' r='1.6' fill='%23F2F7F8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css">
+<style>
+  :root{
+    --bg:#FBFBFA; --bg-soft:#F2F4F3; --bg-code:#101B24; --bg-code-line:#1C2B37;
+    --ink:#1C2733; --ink-soft:#5A6B7A; --ink-faint:#8A99A6;
+    --line:#E3E7EA; --line-strong:#C9D2D8;
+    --accent:#0E7A76; --accent-dark:#0A5F5C; --accent-soft:#DDF0EE;
+    --warn:#C2540A; --warn-soft:#F9E7D8;
+    --hero-bg:#0E1B24; --hero-ink:#EAF2F5; --hero-soft:#9FB2BE; --hero-line:#27404F;
+    --font-sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,'Cascadia Code',Consolas,'Courier New',monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent-dark);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,kbd,.mono{font-family:var(--font-mono)}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;background:rgba(251,251,250,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1060px;margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:22px}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:.2px;color:var(--ink)}
+  .brand svg{display:block}
+  .nav-links{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+  .nav-links a{padding:6px 10px;border-radius:6px;color:var(--ink-soft);font-size:14.5px;font-weight:500}
+  .nav-links a:hover{background:var(--bg-soft);color:var(--accent-dark);text-decoration:none}
+
+  /* ---------- hero ---------- */
+  header{background:var(--hero-bg);color:var(--hero-ink)}
+  .hero{max-width:1060px;margin:0 auto;padding:64px 22px 58px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.9fr);gap:40px;align-items:center}
+  .hero>div:first-child{display:flex;flex-direction:column;justify-content:center}
+  .hero .kicker{font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;color:#7FB5C2;text-transform:none;margin:0 0 12px}
+  .hero h1{font-size:clamp(44px,7.2vw,72px);line-height:1.05;margin:0 0 16px;font-weight:700;letter-spacing:-.5px}
+  .hero h1 .accent{color:#4FB8B2}
+  .hero .sub{font-size:17.5px;line-height:1.55;color:var(--hero-soft);max-width:56ch;margin:0 0 22px}
+  .hero .eq{display:inline-block;background:rgba(255,255,255,.06);border:1px solid var(--hero-line);border-radius:8px;padding:12px 18px;font-family:var(--font-mono);font-size:22px;color:#DFEEF2;margin-bottom:24px}
+  .hero .ref{margin:0 0 26px;font-size:14px;color:#9FB2BE}
+  .hero .ref a{color:#7FD0CA}
+  .badges{display:flex;gap:10px;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:7px;font-size:14px;font-weight:600;border:1px solid var(--hero-line);color:var(--hero-ink)}
+  .badge.solid{background:var(--accent);border-color:var(--accent);color:#F4FAFA}
+  .badge.solid:hover{background:var(--accent-dark);text-decoration:none}
+  .badge.gh:hover{background:rgba(255,255,255,.07);text-decoration:none}
+  .badge svg{display:block}
+  .hero-fig{position:relative}
+  .hero-fig svg{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--hero-line);background:rgba(255,255,255,.025)}
+  .hero-fig .cap{font-size:12.5px;color:#7C93A1;margin-top:8px;text-align:center}
+  @media (max-width:860px){.hero{grid-template-columns:1fr;padding:44px 22px 40px}.hero-fig{max-width:480px;margin:0 auto}}
+
+  /* ---------- sections ---------- */
+  section{padding:58px 0 10px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:26px}
+  .sec-no{font-family:var(--font-mono);font-size:13px;color:var(--accent);letter-spacing:.06em;white-space:nowrap}
+  .sec-head h2{font-size:clamp(22px,3vw,29px);margin:0;letter-spacing:-.2px}
+  .sec-head .rule{flex:1;height:1px;background:var(--line)}
+  h3{font-size:19px;margin:30px 0 12px;letter-spacing:-.1px}
+  p{color:var(--ink-soft)}
+  .lead{font-size:17px;color:var(--ink-soft);max-width:72ch}
+  .lead strong{color:var(--ink);font-weight:600}
+  .lead .math{font-family:var(--font-mono);font-size:.92em;color:var(--ink)}
+
+  /* formula block */
+  .fblock{background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;padding:16px 18px;font-family:var(--font-mono);font-size:15px;overflow-x:auto;margin:14px 0 20px}
+  .fblock .tag{display:block;font-family:var(--font-sans);font-size:12.5px;color:var(--ink-faint);margin-bottom:6px;letter-spacing:.05em}
+  .fblock .n{color:var(--accent-dark);font-weight:500}
+
+  /* feature grid */
+  .feat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
+  @media (max-width:760px){.feat-grid{grid-template-columns:1fr}}
+  .feat{border:1px solid var(--line);border-radius:9px;padding:16px 17px;background:#fff}
+  .feat h4{margin:0 0 7px;font-size:15.5px;color:var(--ink)}
+  .feat p{margin:0;font-size:14px;color:var(--ink-soft);line-height:1.55}
+  .feat .ic{width:34px;height:34px;border-radius:8px;background:var(--accent-soft);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+  .feat .ic svg{width:19px;height:19px}
+
+  /* dispatch table / data tables */
+  .tblwrap{overflow-x:auto;margin:16px 0 22px;border:1px solid var(--line);border-radius:9px;background:#fff}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  table caption{text-align:left;font-size:13px;color:var(--ink-faint);padding:9px 14px;border-bottom:1px solid var(--line);font-family:var(--font-sans)}
+  th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{font-weight:600;color:var(--ink);background:var(--bg-soft);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  td{color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  td.num,th.num{text-align:right}
+  .ok{color:var(--accent-dark);font-weight:600}
+  .warn{color:var(--warn);font-weight:600}
+  .dim{color:var(--ink-faint)}
+  .note{font-size:13px;color:var(--ink-faint);margin:4px 0 18px}
+  .col-strong td{font-weight:500;color:var(--ink)}
+
+  /* code blocks */
+  pre{background:var(--bg-code);color:#DFE9EF;border-radius:9px;padding:15px 17px;overflow-x:auto;font-size:13.5px;line-height:1.55;margin:12px 0 20px;border:1px solid #22313E}
+  pre code{background:none;padding:0;font-family:var(--font-mono)}
+  :not(pre)>code{background:var(--bg-soft);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:.88em;color:var(--accent-dark)}
+
+  /* tabs */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 0}
+  .tab{padding:7px 14px;border-radius:7px 7px 0 0;border:1px solid var(--line);border-bottom:none;background:var(--bg-soft);color:var(--ink-soft);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-sans)}
+  .tab.on{background:var(--bg-code);color:#EAF2F5;border-color:#22313E}
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .tabpane{display:none;margin-top:0}
+  .tabpane.on{display:block}
+  .tabpane pre{margin-top:0}
+
+  /* timeline (method pipeline) */
+  .pipe{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:22px 0;counter-reset:step}
+  .step{border:1px solid var(--line);border-top:3px solid var(--accent);background:#fff;border-radius:0 0 9px 9px;padding:16px 17px;position:relative}
+  .step h4{margin:0 0 6px;font-size:15px}
+  .step p{margin:0;font-size:13.5px;line-height:1.5}
+  .step .n{position:absolute;top:-10px;left:14px;background:var(--accent);color:#F4FAFA;font-family:var(--font-mono);font-size:12px;font-weight:600;padding:1px 8px;border-radius:10px}
+  .pipe .sep{display:flex;align-items:center;justify-content:center;color:var(--line-strong)}
+  .pipe .sep svg{width:18px;height:18px}
+  @media (max-width:760px){.pipe{grid-template-columns:1fr;gap:16px}.pipe .sep{height:18px}}
+
+  /* citing */
+  .bib{background:var(--bg-code);color:#DFE9EF;border-radius:9px;padding:18px 20px;font-family:var(--font-mono);font-size:13.5px;line-height:1.6;overflow-x:auto;border:1px solid #22313E}
+  .bib .k{color:#7FD0CA}
+  .bib .s{color:#E8C4A0}
+
+  footer{border-top:1px solid var(--line);margin-top:64px;padding:26px 0 44px;color:var(--ink-faint);font-size:13.5px}
+  .foot-in{max-width:1060px;margin:0 auto;padding:0 22px;display:flex;gap:14px;flex-wrap:wrap;align-items:baseline}
+
+  /* highlight.js overrides */
+  .hljs{background:transparent;padding:0}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- ===== 视图：导航 ===== -->
+<nav>
+  <div class="nav-in">
+    <a class="brand" href="#top" style="text-decoration:none">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#0E7A76"/><path d="M9 22 L14 22 L14 14 L19 14 L19 22 L24 22" stroke="#F2F7F8" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="22" r="1.6" fill="#F2F7F8"/></svg>
+      SMOP
+    </a>
+    <div class="nav-links">
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#install">Install</a>
+      <a href="#quickstart">Quickstart</a>
+      <a href="#citing">Citing</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== 视图：Hero ===== -->
+<header id="top">
+  <div class="hero">
+    <div>
+      <p class="kicker">Header-only C++17 · Python / R / MATLAB interfaces · optional CUDA</p>
+      <h1>SMOP</h1>
+      <p class="sub">SMOP solves the basis-pursuit denoise problem by tracing the
+      Pareto frontier of the Lasso path with a sieving-based <em>secant</em>
+      level-set method — sparse, fast, and numerically robust.</p>
+      <div class="eq">min ‖x‖₁&nbsp;&nbsp;s.t.&nbsp;&nbsp;‖Ax − b‖₂ ≤ δ</div>
+      <p class="ref">Qian Li, Defeng Sun, Yancheng Yuan, <em>An Efficient Sieving-Based Secant Method for Sparse
+      Optimization Problems with Least-Squares Constraints</em>, SIAM Journal on Optimization <strong>34</strong>(2):2038–2066 (2024),
+      <a href="https://doi.org/10.1137/23M1594443">doi:10.1137/23M1594443</a></p>
+      <div class="badges">
+        <a class="badge gh" href="https://github.com/" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+        <a class="badge solid" href="https://doi.org/10.1137/23M1594443" target="_blank" rel="noopener">Read the paper</a>
+      </div>
+    </div>
+    <div class="hero-fig">
+      <svg viewBox="0 0 360 250" role="img" aria-label="Pareto frontier: the secant method roots psi(mu) = delta with a two-point chord, adaptive sieving keeps Lasso subproblems small">
+        <defs>
+          <marker id="arr" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#9FB2BE"/></marker>
+        </defs>
+        <line x1="34" y1="208" x2="332" y2="208" stroke="#9FB2BE" stroke-width="1.2" marker-end="url(#arr)"/>
+        <line x1="34" y1="208" x2="34" y2="22" stroke="#9FB2BE" stroke-width="1.2" marker-end="url(#arr)"/>
+        <text x="326" y="226" fill="#9FB2BE" font-size="12" font-family="IBM Plex Mono, monospace">μ</text>
+        <text x="12" y="24" fill="#9FB2BE" font-size="12" font-family="IBM Plex Mono, monospace">ψ(μ)</text>
+        <path d="M38 196 L42 196 L46 196 L50 195 L54 195 L58 195 L62 195 L66 195 L70 194 L74 194 L78 194 L82 193 L86 193 L90 193 L94 192 L98 192 L102 192 L106 191 L110 191 L114 190 L118 190 L122 189 L126 188 L130 188 L134 187 L138 187 L142 186 L146 185 L150 184 L154 183 L158 182 L162 182 L166 180 L170 179 L174 178 L178 177 L182 176 L186 174 L190 173 L194 172 L198 170 L202 168 L206 166 L210 165 L214 163 L218 160 L222 158 L226 156 L230 153 L234 151 L238 148 L242 145 L246 142 L250 138 L254 135 L258 131 L262 127 L266 123 L270 119 L274 114 L278 109 L282 104 L286 98 L290 93 L294 86 L298 80 L302 73 L306 66 L310 58 L314 50 L318 41 L322 32" fill="none" stroke="#4FB8B2" stroke-width="2.4"/>
+        <line x1="34" y1="96" x2="310" y2="96" stroke="#E8C4A0" stroke-width="1.2" stroke-dasharray="3 4"/>
+        <text x="312" y="100" fill="#E8C4A0" font-size="12" font-family="IBM Plex Mono, monospace">δ</text>
+        <line x1="210" y1="165" x2="288" y2="96" stroke="#4FB8B2" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <circle cx="210" cy="165" r="3.2" fill="#4FB8B2"/>
+        <text x="192" y="142" fill="#4FB8B2" font-size="11" font-family="IBM Plex Mono, monospace">secant: two-point chord</text>
+        <line x1="288" y1="96" x2="288" y2="208" stroke="#7FD0CA" stroke-width="1.1" stroke-dasharray="4 4"/>
+        <circle cx="288" cy="96" r="4.2" fill="#4FB8B2"/>
+        <text x="288" y="228" fill="#7FD0CA" font-size="12" font-family="IBM Plex Mono, monospace">μ*</text>
+        <text x="262" y="82" fill="#DFEEF2" font-size="12.5" font-family="IBM Plex Mono, monospace">ψ(μ*)=δ</text>
+        <text x="42" y="176" fill="#7C93A1" font-size="11.5" font-family="IBM Plex Mono, monospace">ψ(μ)=‖Ax(μ)−b‖</text>
+
+      </svg>
+      <div class="cap">Pareto frontier: the secant method roots ψ(μ) = δ in a few two-point-chord iterations, with adaptive sieving keeping each Lasso subproblem small</div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== 视图：Method ===== -->
+<section id="method">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">01</span><h2>The problem and the method</h2><span class="rule"></span></div>
+
+    <div class="fblock"><span class="tag">Basis-pursuit denoise — solved with secant level-set, not plain bisection</span>
+min&nbsp; ‖x‖₁&nbsp; s.t.&nbsp; ‖Ax − b‖₂ ≤ δ,&nbsp;&nbsp; x ∈ ℝⁿ</div>
+
+    <p class="lead">SMOP does <strong>not</strong> rely on plain bisection: it implements the
+    <span class="math">sieving-based secant level-set method</span> of Li, Sun &amp; Yuan (2024).
+    The Lasso path <span class="math">x(μ) = argmin ½‖Ax−b‖² + μ‖x‖₁</span> traces a Pareto frontier;
+    the constraint <span class="math">ψ(μ) = ‖Ax(μ)−b‖ = δ</span> is solved by an outer
+    <span class="math">secant / Newton / bisection</span> root-finding loop, while each Lasso subproblem
+    is confined to a small active set by <strong>adaptive sieving</strong>.</p>
+
+    <div class="pipe">
+      <div class="step"><span class="n">1</span><h4>Level-set loop</h4><p>Root-finding on ψ(μ)−δ = 0: secant steps (default) with analytic Newton and guarded bisection fallback, validated every iteration.</p></div>
+      <div class="sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="step"><span class="n">2</span><h4>Adaptive sieving</h4><p>Each Lasso subproblem is warm-started on a small active set and augmented from the KKT residual, following the reference control_addpram budget.</p></div>
+      <div class="sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="step"><span class="n">3</span><h4>Subproblem dispatch</h4><p>Three solvers with a strict preference order — smoothing Newton, then SSNAL, and ADMM only as a last resort.</p></div>
+    </div>
+
+    <h3>Subproblem dispatch</h3>
+    <div class="tblwrap"><table>
+      <caption>Which inner solver runs, and when</caption>
+      <colgroup><col style="width:26%"><col style="width:22%"><col style="width:52%"></colgroup>
+      <thead><tr><th>Subproblem shape</th><th>Primary solver</th><th>Rationale</th></tr></thead>
+      <tbody>
+        <tr><td><code>m &gt; nr</code> (tall)</td><td class="ok">smoothing Newton</td><td>nr×nr normal equations; 30&nbsp;s budget, falls through on failure/timeout</td></tr>
+        <tr><td><code>nr ≥ m</code> or large active set (incl. m ≥ 3000)</td><td class="ok">SSNAL</td><td>dense LDLT (m ≤ 1500) / PCG (m &gt; 1500); nested linsys pass-through</td></tr>
+        <tr><td>both fail / disabled</td><td class="warn">ADMM</td><td>strict last resort only — never preferred for large active sets</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Why it is fast</h3>
+    <div class="feat-grid">
+      <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19 V5 M4 5 h16"/><path d="M7 15 l4 -4 3 3 5 -7"/></svg></div><h4>Fast secant method</h4><p>Superlinear outer root-finding on ψ(μ) = ‖Ax(μ)−b‖ = δ — 3–7 outer iterations instead of the 16–20 a plain bisection needs.</p></div>
+      <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5 12 h14 M12 5 v14"/></svg></div><h4>Adaptive sieving</h4><p>Column subsets are expanded only as needed, keeping every Lasso subproblem on a tiny active set — the engine behind the speed-up on large sparse data.</p></div>
+      <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h10"/></svg></div><h4>Second-order inner solves</h4><p>Smoothing Newton and SSNAL solve each subproblem to high accuracy; the heavy linear algebra lands on tiny reduced systems.</p></div>
+      <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div><h4>Header-only C++17 + Eigen</h4><p>No build system required for the core: <code>#include "smop/smop.hpp"</code> and compile. OpenMP parallelization on large sparse operators.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：Results ===== -->
+<section id="results">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">02</span><h2>Results on real data</h2><span class="rule"></span></div>
+
+    <h3>UCI benchmark — δ = 0.5 · ‖b‖</h3>
+    <p class="lead">11 data files, 10 unique datasets (two pyrim entries are the same data under
+    different spellings, identical MD5). Wall-clock full-solve times; WSL Ubuntu, g++ 15.2
+    <code>-O3 -march=native -fopenmp</code>.</p>
+    <div class="tblwrap"><table>
+      <caption>All 10 unique datasets converge at δ = 0.5 · ‖b‖; ‖x‖₁ is identical across the three outer schemes.</caption>
+      <colgroup><col style="width:20%"><col style="width:17%"><col style="width:12%"><col style="width:14%"><col style="width:37%"></colgroup>
+      <thead><tr><th>Dataset</th><th class="num">m×n</th><th>Type</th><th class="num">δ=0.5</th><th class="num">‖x‖₁ at δ=0.5</th></tr></thead>
+      <tbody>
+        <tr><td>pyrim</td><td class="num">74×201,376</td><td>sparse</td><td class="num">0.117 s</td><td class="num">0.3487</td></tr>
+        <tr><td>triazines</td><td class="num">186×635,376</td><td>sparse</td><td class="num">0.686 s</td><td class="num">0.3558</td></tr>
+        <tr><td>bodyfat</td><td class="num">252×116,280</td><td>dense</td><td class="num">0.248 s</td><td class="num">0.7972</td></tr>
+        <tr><td>mpg</td><td class="num">392×3,432</td><td>dense</td><td class="num">0.406 s</td><td class="num">247.8360</td></tr>
+        <tr><td>space_ga</td><td class="num">3,107×5,005</td><td>dense</td><td class="num">0.172 s</td><td class="num">6.3869</td></tr>
+        <tr><td>abalone</td><td class="num">4,177×6,435</td><td>dense</td><td class="num">2.334 s</td><td class="num">61.0847</td></tr>
+        <tr><td>E2006.test</td><td class="num">3,308×150,358</td><td>sparse</td><td class="num">0.068 s</td><td class="num">0.5121</td></tr>
+        <tr><td>E2006.train</td><td class="num">16,087×150,360</td><td>sparse</td><td class="num">0.343 s</td><td class="num">0.5246</td></tr>
+        <tr><td>log1p.E2006.test</td><td class="num">3,308×4,272,226</td><td>sparse</td><td class="num">0.990 s</td><td class="num">0.3078</td></tr>
+        <tr><td>log1p.E2006.train</td><td class="num">16,087×4,272,227</td><td>sparse</td><td class="num">1.906 s</td><td class="num">0.3019</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Wall-clock full-solve times for the default scheme (bisection + secant with adaptive sieving); the two fast outer schemes produce identical ‖x‖₁ (see the comparison below).</p>
+
+    <h3>Outer root-finding schemes compared</h3>
+    <p class="lead">The same 10 problems at δ = 0.5 · ‖b‖, solved with three outer schemes:
+    pure bisection, bisection + secant with adaptive sieving (the default), and bisection + Newton.
+    All three converge to the same ‖x‖₁ on every dataset.</p>
+    <div class="tblwrap"><table>
+      <caption>Wall-clock full-solve times (s) with outer-iteration counts (B = bisection steps, N/S = Newton or secant steps)</caption>
+      <colgroup><col style="width:20%"><col style="width:27%"><col style="width:27%"><col style="width:26%"></colgroup>
+      <thead><tr><th>Dataset</th><th class="num">Bisection only</th><th class="num">Bisection + Secant (default)</th><th class="num">Bisection + Newton</th></tr></thead>
+      <tbody>
+        <tr><td>pyrim</td><td class="num">0.375 s (18 B)</td><td class="num">0.117 s (2 B + 3 N/S)</td><td class="num">0.104 s (1 B + 2 N/S)</td></tr>
+        <tr><td>triazines</td><td class="num">1.547 s (18 B)</td><td class="num">0.686 s (2 B + 3 N/S)</td><td class="num">0.685 s (1 B + 2 N/S)</td></tr>
+        <tr><td>bodyfat</td><td class="num">0.560 s (20 B)</td><td class="num">0.248 s (2 B + 3 N/S)</td><td class="num">0.193 s (1 B + 2 N/S)</td></tr>
+        <tr><td>mpg</td><td class="num">0.358 s (20 B)</td><td class="num">0.406 s (3 B + 4 N/S)</td><td class="num">0.376 s (3 B + 3 N/S)</td></tr>
+        <tr><td>space_ga</td><td class="num">0.352 s (16 B)</td><td class="num">0.172 s (3 B + 4 N/S)</td><td class="num">0.183 s (3 B + 4 N/S)</td></tr>
+        <tr><td>abalone</td><td class="num">10.967 s (20 B)</td><td class="num">2.334 s (3 B + 4 N/S)</td><td class="num">1.628 s (3 B + 3 N/S)</td></tr>
+        <tr><td>E2006.test</td><td class="num">0.162 s (17 B)</td><td class="num">0.068 s (2 B + 3 N/S)</td><td class="num">0.074 s (1 B + 2 N/S)</td></tr>
+        <tr><td>E2006.train</td><td class="num">0.962 s (20 B)</td><td class="num">0.343 s (2 B + 3 N/S)</td><td class="num">0.261 s (1 B + 2 N/S)</td></tr>
+        <tr><td>log1p.E2006.test</td><td class="num">3.001 s (17 B)</td><td class="num">0.990 s (2 B + 3 N/S)</td><td class="num">0.761 s (1 B + 2 N/S)</td></tr>
+        <tr><td>log1p.E2006.train</td><td class="num">5.591 s (20 B)</td><td class="num">1.906 s (2 B + 3 N/S)</td><td class="num">1.583 s (1 B + 2 N/S)</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Pure bisection needs 16–20 outer iterations; both fast schemes need only 3–7.
+    Total wall-clock: 23.9 s (bisection) vs 7.3 s (bisection + secant) vs 5.8 s (bisection + Newton),
+    with ‖x‖₁ agreeing to 4+ digits across all three on every dataset.</p>
+    <div id="chart-modes" style="width:100%;height:380px"></div>
+
+    <h4>At the tighter bound δ = 0.3 · ‖b‖</h4>
+    <div class="tblwrap"><table>
+      <caption>All 10 datasets still converge at δ = 0.3 · ‖b‖; ‖x‖₁ agrees across schemes to 4+ digits</caption>
+      <colgroup><col style="width:20%"><col style="width:27%"><col style="width:27%"><col style="width:26%"></colgroup>
+      <thead><tr><th>Dataset</th><th class="num">Bisection only</th><th class="num">Bisection + Secant (default)</th><th class="num">Bisection + Newton</th></tr></thead>
+      <tbody>
+        <tr><td>pyrim</td><td class="num">0.372 (20 B)</td><td class="num">0.113 (2 B + 3 N/S)</td><td class="num">0.144 (2 B + 3 N/S)</td></tr>
+        <tr><td>triazines</td><td class="num">2.119 (20 B)</td><td class="num">0.883 (2 B + 3 N/S)</td><td class="num">0.829 (2 B + 2 N/S)</td></tr>
+        <tr><td>bodyfat</td><td class="num">0.620 (20 B)</td><td class="num">0.239 (2 B + 3 N/S)</td><td class="num">0.264 (2 B + 3 N/S)</td></tr>
+        <tr><td>mpg</td><td class="num">1.185 (20 B)</td><td class="num">0.437 (3 B + 4 N/S)</td><td class="num">0.588 (3 B + 3 N/S)</td></tr>
+        <tr><td>space_ga</td><td class="num">250.360 (25 B)</td><td class="num">153.638 (8 B + 5 N/S)</td><td class="num">71.389 (8 B + 4 N/S)</td></tr>
+        <tr><td>abalone</td><td class="num">329.017 (22 B)</td><td class="num">169.577 (7 B + 4 N/S)</td><td class="num">168.076 (7 B + 2 N/S)</td></tr>
+        <tr><td>E2006.test</td><td class="num">0.197 (18 B)</td><td class="num">0.070 (2 B + 3 N/S)</td><td class="num">0.093 (2 B + 3 N/S)</td></tr>
+        <tr><td>E2006.train</td><td class="num">0.809 (20 B)</td><td class="num">0.382 (2 B + 3 N/S)</td><td class="num">0.397 (2 B + 3 N/S)</td></tr>
+        <tr><td>log1p.E2006.test</td><td class="num">3.748 (21 B)</td><td class="num">1.031 (2 B + 3 N/S)</td><td class="num">1.152 (2 B + 3 N/S)</td></tr>
+        <tr><td>log1p.E2006.train</td><td class="num">5.394 (19 B)</td><td class="num">2.142 (2 B + 4 N/S)</td><td class="num">2.087 (2 B + 3 N/S)</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">The dense high-cardinality sets (space_ga, abalone) dominate the wall-clock here — their
+    bisection-only runs exceed 4 minutes — while both fast schemes stay under 3 minutes.
+    Total wall-clock: 593.8 s (bisection) vs 328.5 s (bisection + secant) vs 245.0 s (bisection + Newton).</p>
+
+    <h3>δ-gradient behaviour</h3>
+    <div class="tblwrap"><table>
+      <caption>Difficulty grows as δ shrinks — at δ=0.5 and δ=0.4 all 10 datasets converge</caption>
+      <colgroup><col style="width:24%"><col style="width:19%"><col style="width:19%"><col style="width:19%"><col style="width:19%"></colgroup>
+      <thead><tr><th>Regime</th><th>δ=0.5</th><th>δ=0.4</th><th>δ=0.01</th><th>δ=0.001</th></tr></thead>
+      <tbody>
+        <tr><td>small low-noise (bodyfat, mpg)</td><td class="ok">converge</td><td class="ok">converge</td><td class="ok">converge</td><td class="ok">converge</td></tr>
+        <tr><td>pyrim / triazines</td><td class="ok">converge</td><td class="ok">converge</td><td class="warn">stall — δ unreachable</td><td class="warn">stall — δ unreachable</td></tr>
+        <tr><td>large active-set datasets</td><td class="ok">converge</td><td class="ok">converge</td><td class="warn">time budget</td><td class="dim">—</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Stalls are detected and reported cleanly (<code>status 3, “delta unreachable”</code>) instead of
+    spinning through 200 bisection iterations.</p>
+
+    <h3>Interface consistency</h3>
+    <div class="tblwrap"><table>
+      <caption>Same random problem across all four interfaces — status 0 = converged in every case, and the constraint is satisfied</caption>
+      <colgroup><col style="width:22%"><col style="width:20%"><col style="width:20%"><col style="width:16%"><col style="width:22%"></colgroup>
+      <thead><tr><th>Interface</th><th>Level-set status (0 = converged)</th><th>‖Ax−b‖ vs δ</th><th>Lasso KKT</th><th>‖x‖₁ (true 7.63)</th></tr></thead>
+      <tbody>
+        <tr><td>C++ core (T1–T5)</td><td class="ok">0 (converged)</td><td>≤ δ</td><td>&lt; 1e-6</td><td>matches</td></tr>
+        <tr><td>Python</td><td class="ok">0 (converged)</td><td>1.29e-01 ≈ 1.29e-01</td><td>obj 3.44e-01</td><td>7.586</td></tr>
+        <tr><td>R</td><td class="ok">0 (converged)</td><td>1.292e-01 ≈ 1.292e-01</td><td>6.7e-07</td><td>7.586</td></tr>
+        <tr><td>MATLAB / Octave</td><td class="ok">0 (converged)</td><td>1.630e-01 ≈ 1.630e-01</td><td>6.6e-07</td><td>8.648</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">The public API name <code>solve_bmop</code> is kept for interface compatibility — the algorithm implemented is the sieving-based secant level-set method, and plain bisection is never the default. Full tables, stalls and the dispatch rationale: <a href="VERIFICATION.md">docs/VERIFICATION.md</a> ·
+    interface docs: <a href="INTERFACES.md">docs/INTERFACES.md</a> · GPU notes: <a href="GPU.md">docs/GPU.md</a></p>
+  </div>
+</section>
+
+<!-- ===== 视图：Install ===== -->
+<section id="install">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">03</span><h2>Installation</h2><span class="rule"></span></div>
+    <p class="lead">First, get <a href="https://eigen.tuxfamily.org/" target="_blank" rel="noopener">Eigen 3.4.x</a>
+    headers into <code>smop/third_party/eigen-3.4.0/</code> (or use your system package — see platform notes):</p>
+<pre><code class="language-bash">cd smop/third_party
+curl -L -o eigen.tar.gz https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+tar xzf eigen.tar.gz        # -> third_party/eigen-3.4.0/</code></pre>
+
+    <div class="tabs" role="tablist" aria-label="Platform">
+      <button class="tab on" data-tab="p-linux" role="tab">Linux</button>
+      <button class="tab" data-tab="p-mac" role="tab">macOS</button>
+      <button class="tab" data-tab="p-win" role="tab">Windows</button>
+    </div>
+
+    <div class="tabpane on" id="p-linux">
+<pre><code class="language-bash"># 1. toolchain
+sudo apt-get update &amp;&amp; sudo apt-get install -y g++ libeigen3-dev
+
+# 2. C++ (CMake)
+cmake -S . -B build &amp;&amp; cmake --build build --config Release
+./build/test_cpp                          # regression suite (T1-T5)
+
+#    or directly:
+g++ -std=c++17 -O3 -march=native -fopenmp -I include -I /usr/include/eigen3 \
+    examples/example_cpp.cpp -o example_cpp &amp;&amp; ./example_cpp
+
+# 3. Python
+pip install numpy pybind11
+cd python &amp;&amp; pip install .
+python -c "import smop; print(smop.version())"
+
+# 4. R
+cd R &amp;&amp; R CMD INSTALL --preclean .
+Rscript -e 'library(smop); print(smop_version())'
+
+# 5. MATLAB / Octave
+cd matlab
+mkoctfile --mex -I../include -I../third_party/eigen-3.4.0 smop_mex.cpp smop_lasso_mex.cpp
+octave --no-gui test_smop_octave.m</code></pre>
+    </div>
+
+    <div class="tabpane" id="p-mac">
+<pre><code class="language-bash"># 1. toolchain + Eigen (Homebrew)
+brew install gcc libomp eigen
+#   M-series: Eigen at /opt/homebrew/include/eigen3
+#   Intel:    Eigen at /usr/local/include/eigen3
+
+# 2. C++
+cmake -S . -B build &amp;&amp; cmake --build build --config Release
+./build/test_cpp
+
+#    or directly (Apple Silicon paths shown):
+g++ -std=c++17 -O3 -fopenmp -I include -I /opt/homebrew/include/eigen3 \
+    examples/example_cpp.cpp -o example_cpp &amp;&amp; ./example_cpp
+#    (clang++ also works: brew install libomp for -fopenmp, or drop the flag)
+
+# 3. Python / 4. R / 5. MATLAB: same commands as the Linux tab
+pip install numpy pybind11 &amp;&amp; cd python &amp;&amp; pip install .
+cd R &amp;&amp; R CMD INSTALL --preclean .
+cd matlab &amp;&amp; mkoctfile --mex -I../include -I../third_party/eigen-3.4.0 smop_mex.cpp smop_lasso_mex.cpp</code></pre>
+    </div>
+
+    <div class="tabpane" id="p-win">
+<pre><code class="language-bash"># Recommended: WSL (Ubuntu) - the stable, fully verified channel.
+# Windows-native builds work, but Smart App Control (SAC) may block
+# freshly built .exe files, so WSL is the safe path.
+
+# 1. install WSL + Ubuntu (one time)
+wsl --install -d Ubuntu
+wsl -d Ubuntu -u root -- bash -lc "apt-get update &amp;&amp; apt-get install -y g++ libeigen3-dev"
+
+# 2. C++ (build &amp; run entirely inside WSL)
+wsl -d Ubuntu -u root -- bash -lc "g++ -std=c++17 -O3 -march=native -fopenmp \
+  -I /mnt/c/&lt;path&gt;/smop/include -I /usr/include/eigen3 \
+  /mnt/c/&lt;path&gt;/smop/examples/example_cpp.cpp -o /root/example_cpp &amp;&amp; /root/example_cpp"
+
+# 3-5. Python / R / MATLAB: run the Linux-tab commands inside WSL.
+
+# Alternative: native MSYS2 + VS Code
+#   - set the C/C++ extension to C:/msys64/ucrt64/bin/g++.exe
+#     (.vscode/c_cpp_properties.json + tasks.json ship in the repo; Ctrl+Shift+B builds)
+#   - g++ -std=c++17 -O2 -I include -I &lt;eigen3&gt; examples/example_cpp.cpp -o example_cpp
+#   - caveat: running freshly built .exe may be blocked by SAC; validate with
+#     tests/pysmop_ref.py or the Python interface instead</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：Quickstart ===== -->
+<section id="quickstart">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">04</span><h2>Quick start</h2><span class="rule"></span></div>
+    <p class="lead">One solve per language. Full option lists and result schemas:
+    <a href="INTERFACES.md">docs/INTERFACES.md</a>.</p>
+
+    <div class="tabs" role="tablist" aria-label="Language">
+      <button class="tab on" data-tab="l-cpp" role="tab">C++</button>
+      <button class="tab" data-tab="l-py" role="tab">Python</button>
+      <button class="tab" data-tab="l-r" role="tab">R</button>
+      <button class="tab" data-tab="l-m" role="tab">MATLAB</button>
+    </div>
+
+    <div class="tabpane on" id="l-cpp">
+<pre><code class="language-cpp">#include "smop/smop.hpp"
+
+Eigen::MatrixXd A = ...;             // m x n
+Eigen::VectorXd b = ...;             // m
+double delta = ...;
+
+smop::SmopResult r = smop::solve_bmop(A, b, delta);
+// r.x : solution;  r.info.status == 0 -> converged
+
+smop::LassoResult lr = smop::solve_lasso(A, b, lambda);</code></pre>
+    </div>
+
+    <div class="tabpane" id="l-py">
+<pre><code class="language-python">import numpy as np, smop
+
+A = np.random.standard_normal((40, 150))
+b = np.random.standard_normal(40)
+delta = 0.5 * np.linalg.norm(b)
+
+res = smop.solve_bmop(A, b, delta, verbose=1)
+x = res["x"]
+print(res["status"], res["msg"])
+print(np.linalg.norm(A @ x - b), delta)      # constraint satisfaction</code></pre>
+    </div>
+
+    <div class="tabpane" id="l-r">
+<pre><code class="language-r">library(smop)
+
+res <- solve_bmop(A, b, delta, options = list(verbose = 0))
+cat(res$status, res$msg)
+
+lr <- solve_lasso(A, b, 0.05)</code></pre>
+    </div>
+
+    <div class="tabpane" id="l-m">
+<pre><code class="language-matlab">res = smop(A, b, delta);
+fprintf('%d %s\n', res.status, res.msg);
+fprintf('%g %g\n', norm(A*res.x-b), delta);</code></pre>
+    </div>
+
+    <h3>Solve a Lasso directly</h3>
+    <p class="lead">Every level-set subproblem is an unconstrained Lasso — <code>min ½‖Ax − b‖² + λ‖x‖₁</code> —
+    so SMOP exposes it directly. Same core, same interfaces, verified KKT residuals below 1e-6 on all four.</p>
+    <div class="tabs" role="tablist" aria-label="Lasso language">
+      <button class="tab on" data-tab="la-cpp" role="tab">C++</button>
+      <button class="tab" data-tab="la-py" role="tab">Python</button>
+      <button class="tab" data-tab="la-r" role="tab">R</button>
+      <button class="tab" data-tab="la-m" role="tab">MATLAB</button>
+    </div>
+    <div class="tabpane on" id="la-cpp">
+<pre><code class="language-cpp">smop::LassoResult lr = smop::solve_lasso(A, b, 0.05);
+// lr.x   : solution
+// lr.eta : relative KKT residual (&lt; 1e-6)</code></pre>
+    </div>
+    <div class="tabpane" id="la-py">
+<pre><code class="language-python">lr = smop.solve_lasso(A, b, 0.05)
+print(lr["eta"])        # 3.4e-07 on the interface test</code></pre>
+    </div>
+    <div class="tabpane" id="la-r">
+<pre><code class="language-r">lr &lt;- solve_lasso(A, b, 0.05)
+print(lr$eta)           # 6.7e-07</code></pre>
+    </div>
+    <div class="tabpane" id="la-m">
+<pre><code class="language-matlab">lr = smop_lasso(A, b, 0.05);
+disp(lr.eta)            % 6.6e-07</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：Citing ===== -->
+<section id="citing">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">05</span><h2>Citing SMOP</h2><span class="rule"></span></div>
+    <p class="lead">If you use SMOP in your work, please cite the algorithm paper:</p>
+    <div class="bib"><span class="k">@article</span>{LiSunYuan2024,
+&nbsp;&nbsp;<span class="k">author</span>&nbsp;&nbsp;= {Li, Qian and Sun, Defeng and Yuan, Yancheng},
+&nbsp;&nbsp;<span class="k">title</span>&nbsp;&nbsp;&nbsp;= {An Efficient Sieving-Based Secant Method for Sparse Optimization
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Problems with Least-Squares Constraints},
+&nbsp;&nbsp;<span class="k">journal</span> = {SIAM Journal on Optimization},
+&nbsp;&nbsp;<span class="k">volume</span>&nbsp;&nbsp;= {34},
+&nbsp;&nbsp;<span class="k">number</span>&nbsp;&nbsp;= {2},
+&nbsp;&nbsp;<span class="k">pages</span>&nbsp;&nbsp;&nbsp;= {2038--2066},
+&nbsp;&nbsp;<span class="k">year</span>&nbsp;&nbsp;&nbsp;&nbsp;= {2024},
+&nbsp;&nbsp;<span class="k">doi</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {10.1137/23M1594443}
+}</div>
+    <div class="authors" style="margin-top:16px">
+      Authors: <a href="https://qianli-ql-xa.github.io/" target="_blank" rel="noopener">Qian Li</a> ·
+      <a href="https://www.polyu.edu.hk/ama/profile/dfsun/" target="_blank" rel="noopener">Defeng Sun</a> ·
+      <a href="https://paulyuanmath.github.io/" target="_blank" rel="noopener">Yancheng Yuan</a>
+    </div>
+    <p class="note" style="margin-top:14px">Also available as <code>CITATION.bib</code> in the repository root. License: MIT © 2026 Qian Li.</p>
+  </div>
+</section>
+
+<!-- ===== 视图：Footer ===== -->
+<footer>
+  <div class="foot-in">
+    <span>SMOP — sieving-based secant level-set method · MIT license</span>
+    <span>·</span>
+    <a href="README.md">README</a>
+    <span>·</span>
+    <a href="VERIFICATION.md">Verification</a>
+    <span>·</span>
+    <a href="INTERFACES.md">Interfaces</a>
+    <span>·</span>
+    <a href="GPU.md">GPU</a>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  /* tabs */
+  document.querySelectorAll('.tabs').forEach(function(ts){
+    var btns = ts.querySelectorAll('.tab');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+        var scope = ts.parentElement;
+        var panes = scope.querySelectorAll('.tabpane');
+        panes.forEach(function(p){ p.classList.remove('on'); });
+        var pane = document.getElementById(b.getAttribute('data-tab'));
+        if (pane) pane.classList.add('on');
+      });
+    });
+  });
+
+  /* syntax highlighting (best-effort; plain text remains readable) */
+  if (window.hljs) {
+    document.querySelectorAll('pre code').forEach(function(el){
+      try { hljs.highlightElement(el); } catch(e) {}
+    });
+  }
+
+  var chartEl2 = document.getElementById('chart-modes');
+  if (chartEl2 && window.echarts) {
+    var names = ['pyrim','triazines','bodyfat','mpg','space_ga','abalone',
+                 'E2006.test','E2006.train','log1p.test','log1p.train'];
+    var dBi = [0.375,1.547,0.560,0.358,0.352,10.967,0.162,0.962,3.001,5.591];
+    var dSec = [0.117,0.686,0.248,0.406,0.172,2.334,0.068,0.343,0.990,1.906];
+    var dNew = [0.104,0.685,0.193,0.376,0.183,1.628,0.074,0.261,0.761,1.583];
+    var chart2 = echarts.init(chartEl2);
+    var opt2 = {
+      grid: { left: 16, right: 46, top: 34, bottom: 12, containLabel: true },
+      tooltip: {
+        trigger: 'axis', triggerOn: 'mousemove|click', confine: true,
+        formatter: function(ps){
+          var out = ps[0].name + '<br/>';
+          ps.forEach(function(p){
+            out += p.marker + ' ' + p.seriesName + ': ' + p.value + ' s<br/>';
+          });
+          return out;
+        }
+      },
+      xAxis: {
+        type: 'value', name: 'wall-clock (s, log)', nameLocation: 'middle',
+        nameGap: 26, nameTextStyle: { fontSize: 12, color: '#5A6B7A' },
+        logBase: 10,
+        axisLabel: { fontSize: 11, color: '#5A6B7A' },
+        splitLine: { lineStyle: { color: '#E3E7EA' } }
+      },
+      yAxis: {
+        type: 'category', data: names,
+        axisLabel: { fontSize: 11, color: '#1C2733', width: 96, overflow: 'truncate' },
+        axisLine: { show: true, lineStyle: { color: '#C9D2D8' } },
+        axisTick: { show: false }
+      },
+      legend: { top: 0, left: 120, itemWidth: 14, itemHeight: 9, textStyle: { fontSize: 12, color: '#1C2733' } },
+      series: [
+        {
+          name: 'Bisection only', type: 'bar', data: dBi,
+          barWidth: 6, itemStyle: { color: '#8A97A3', borderRadius: 2 },
+          label: { show: true, position: 'right', fontSize: 10.5, color: '#5A6B7A', formatter: function(p){ return p.value + ' s'; } }
+        },
+        {
+          name: 'Bisection + Secant (default)', type: 'bar', data: dSec,
+          barWidth: 6, itemStyle: { color: '#0E7A76', borderRadius: 2 },
+          label: { show: true, position: 'right', fontSize: 10.5, color: '#0A5F5C', formatter: function(p){ return p.value + ' s'; } }
+        },
+        {
+          name: 'Bisection + Newton', type: 'bar', data: dNew,
+          barWidth: 6, itemStyle: { color: '#E8B23A', borderRadius: 2 },
+          label: { show: true, position: 'right', fontSize: 10.5, color: '#8A5A00', formatter: function(p){ return p.value + ' s'; } }
+        }
+      ]
+    };
+    chart2.setOption(opt2);
+    window.addEventListener('resize', function(){ chart2.resize(); });
+  }
+})();
+</script>
+
+</body>
+</html>

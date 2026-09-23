@@ -1,0 +1,56 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "smop: build & run levelset trace",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+        "${workspaceFolder}/build_levelset.ps1"
+      ],
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$gcc"],
+      "detail": "Compile examples/example_levelset_trace.exe and print the outer level-set iterations (via build_levelset.ps1)."
+    },
+    {
+      "label": "smop: build & run tests",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+        "${workspaceFolder}/build_test.ps1"
+      ],
+      "group": "build",
+      "problemMatcher": ["$gcc"],
+      "detail": "Compile tests/test_cpp.exe with UCRT64 g++ and run the full test suite (via build_test.ps1)."
+    },
+    {
+      "label": "smop: build & run example",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+        "${workspaceFolder}/build_example.ps1"
+      ],
+      "group": "build",
+      "problemMatcher": ["$gcc"],
+      "detail": "Compile and run the basic C++ example (via build_example.ps1)."
+    },
+    {
+      "label": "smop: compile obj only",
+      "type": "shell",
+      "command": "C:/msys64/ucrt64/bin/g++.exe",
+      "args": [
+        "-std=c++17", "-O2", "-fno-use-linker-plugin",
+        "-I", "${workspaceFolder}/include",
+        "-I", "${workspaceFolder}/third_party/eigen-3.4.0",
+        "-c", "${workspaceFolder}/tests/test_cpp.cpp",
+        "-o", "${workspaceFolder}/tests/test_cpp.o"
+      ],
+      "group": "build",
+      "problemMatcher": ["$gcc"],
+      "detail": "Syntax-check only: compile to tests/test_cpp.o without linking."
+    }
+  ]
+}

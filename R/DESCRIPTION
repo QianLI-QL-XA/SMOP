@@ -1,0 +1,18 @@
+Package: smop
+Type: Package
+Title: Level-Set Method for Sparse Optimization (BMOP) - C++ Core with R Interface
+Version: 0.1.0
+Authors@R: person("smop", "developers", role = c("aut", "cre"),
+    email = "dev@example.invalid")
+Description: Solves the Basis-Pursuit / Lasso with a level-set constraint
+    min ||x||_1 s.t. ||A x - b||_2 <= delta, using the level-set method of
+    Li, Sun & Yuan with adaptive sieving and smoothing-Newton subproblems.
+    The numerical core is C++ (header-only, Eigen); this package provides
+    the R interface via Rcpp.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 3.6.0)
+Imports: Rcpp (>= 1.0.0)
+LinkingTo: Rcpp
+SystemRequirements: C++17, Eigen (header-only, bundled under third_party/)
+NeedsCompilation: yes

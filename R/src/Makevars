@@ -1,0 +1,4 @@
+# smop R package: compile flags (non-Windows)
+CXX_STD = CXX17
+PKG_CPPFLAGS = -I../../include -I../../third_party/eigen-3.4.0
+PKG_CXXFLAGS = -O2

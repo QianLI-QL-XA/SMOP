@@ -1,0 +1,5 @@
+useDynLib(smop, .registration = TRUE)
+importFrom(Rcpp, evalCpp)
+export(solve_bmop)
+export(solve_lasso)
+export(smop_version)

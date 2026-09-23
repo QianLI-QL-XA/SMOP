@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=64", "wheel", "pybind11>=2.11"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smop"
+version = "0.1.0"
+description = "Level-set method for BMOP (min ||x||_1 s.t. ||Ax-b||<=delta), C++ core with Python bindings"
+requires-python = ">=3.8"
+dependencies = ["numpy"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+[tool.setuptools.packages.find]
+where = ["src"]
