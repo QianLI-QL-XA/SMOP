@@ -789,7 +789,7 @@ var PYRIM = {rows:74, cols:27, A:[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
     return SMOP_PROMISE;
   }
 
-  function fmt(v, d){ return Number(v).toPrecision(d == null ? 6 : d); }
+  function fmt(v, d){ var x = Number(v); if (!isFinite(x)) return '---'; return x.toPrecision(d == null ? 6 : d); }
 
   function renderOnline(r){
     var ok = (r.status === 0);
@@ -798,8 +798,8 @@ var PYRIM = {rows:74, cols:27, A:[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
     sum.innerHTML =
       '<div class="mcards">' +
         '<div class="mcard"><b>' + fmt(r.obj) + '</b><span>' + (isBmop ? '‖x‖₁' : 'objective') + '</span></div>' +
-        '<div class="mcard"><b>' + fmt(r.psi, 6) + '</b><span>‖Ax−b‖₂</span></div>' +
-        '<div class="mcard"><b>' + fmt(r.mu, 6) + '</b><span>μ / λ</span></div>' +
+        '<div class="mcard"><b>' + (isBmop ? fmt(r.psi, 6) : '---') + '</b><span>‖Ax−b‖₂</span></div>' +
+        '<div class="mcard"><b>' + (isBmop ? fmt(r.mu, 6) : '---') + '</b><span>μ / λ</span></div>' +
         '<div class="mcard"><b>' + fmt(r.time, 4) + ' s</b><span>wall-clock</span></div>' +
         '<div class="mcard"><b>' + r.nnz + '</b><span>nnz(x)</span></div>' +
         '<div class="mcard"><b>' + r.iter + '</b><span>outer iters</span></div>' +
