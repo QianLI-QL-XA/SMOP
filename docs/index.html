@@ -10,11 +10,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css">
 <style>
   :root{
-    --bg:#0A1219; --bg-soft:#0F1B24; --bg-code:#0C151D; --bg-code-line:#1C2B37;
-    --ink:#D9E4EA; --ink-soft:#9FB2BE; --ink-faint:#5F7786;
-    --line:#1E303C; --line-strong:#2A4150;
-    --accent:#35B3AC; --accent-dark:#4FB8B2; --accent-soft:#0F2A2A;
-    --warn:#E8A55C; --warn-soft:#2A1E10;
+    --bg:#FBFBFA; --bg-soft:#F2F4F3; --bg-code:#101B24; --bg-code-line:#1C2B37;
+    --ink:#1C2733; --ink-soft:#5A6B7A; --ink-faint:#8A99A6;
+    --line:#E3E7EA; --line-strong:#C9D2D8;
+    --accent:#0E7A76; --accent-dark:#0A5F5C; --accent-soft:#DDF0EE;
+    --warn:#C2540A; --warn-soft:#F9E7D8;
     --hero-bg:#070F16; --hero-ink:#EAF2F5; --hero-soft:#9FB2BE; --hero-line:#1C3443;
     --font-sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
     --font-mono:'IBM Plex Mono',ui-monospace,'Cascadia Code',Consolas,'Courier New',monospace;
@@ -24,8 +24,8 @@
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:17.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
   /* faint engineering grid over the whole page, fading out downward */
   body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-    background-image:radial-gradient(rgba(79,184,178,.13) 1px,transparent 1px);
-    background-size:28px 28px;
+    background-image:radial-gradient(rgba(14,122,118,.07) 1px,transparent 1px);
+    background-size:30px 30px;
     -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 20%,transparent 78%);
     mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 20%,transparent 78%);}
   a{color:var(--accent-dark);text-decoration:none}
@@ -34,7 +34,7 @@
   .wrap{width:100%;max-width:1600px;margin:0 auto;padding:0 32px}
 
   /* ---------- nav ---------- */
-  nav{position:sticky;top:0;z-index:50;background:rgba(10,18,25,.9);border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(53,179,172,.18) inset}
+  nav{position:sticky;top:0;z-index:50;background:rgba(251,251,250,.94);border-bottom:1px solid var(--line)}
   .nav-in{max-width:1600px;margin:0 auto;padding:10px 32px;display:flex;align-items:center;gap:22px}
   .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18.5px;letter-spacing:.2px;color:var(--ink)}
   .brand svg{display:block}
@@ -92,7 +92,7 @@
   .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:26px}
   .sec-no{font-family:var(--font-mono);font-size:14px;color:var(--accent-dark);letter-spacing:.06em;white-space:nowrap}
   .sec-head h2{font-size:clamp(24px,3.2vw,32px);margin:0;letter-spacing:-.2px}
-  .sec-head .rule{flex:1;height:1px;background:linear-gradient(90deg,rgba(79,184,178,.45),transparent)}
+  .sec-head .rule{flex:1;height:1px;background:linear-gradient(90deg,rgba(14,122,118,.4),transparent)}
   h3{font-size:21px;margin:30px 0 12px;letter-spacing:-.1px}
   p{color:var(--ink-soft)}
   .lead{font-size:18.5px;color:var(--ink-soft);max-width:72ch}
@@ -108,7 +108,7 @@
   .feat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
   @media (max-width:760px){.feat-grid{grid-template-columns:1fr}}
   .feat{border:1px solid var(--line);border-radius:9px;padding:16px 17px;background:var(--bg-soft);transition:border-color .18s,background .18s}
-  .feat:hover{border-color:rgba(79,184,178,.45);background:#11202B}
+  .feat:hover{border-color:rgba(14,122,118,.4);background:#fff}
   .feat h4{margin:0 0 7px;font-size:17px;color:var(--ink)}
   .feat p{margin:0;font-size:15.5px;color:var(--ink-soft);line-height:1.55}
   .feat .ic{width:34px;height:34px;border-radius:8px;background:var(--accent-soft);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;margin-bottom:10px;border:1px solid rgba(79,184,178,.3)}
@@ -121,7 +121,7 @@
   th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
   th{font-weight:600;color:var(--ink);background:var(--bg-code);white-space:nowrap}
   tbody tr:last-child td{border-bottom:none}
-  tbody tr:nth-child(even){background:rgba(255,255,255,.022)}
+  tbody tr:nth-child(even){background:rgba(20,35,45,.03)}
   td{color:var(--ink-soft);font-variant-numeric:tabular-nums}
   td.num,th.num{text-align:right}
   .ok{color:var(--accent-dark);font-weight:600}
@@ -149,7 +149,7 @@
   .step{border:1px solid var(--line);border-top:3px solid var(--accent);background:var(--bg-soft);border-radius:0 0 9px 9px;padding:16px 17px;position:relative}
   .step h4{margin:0 0 6px;font-size:16.5px}
   .step p{margin:0;font-size:15px;line-height:1.5}
-  .step .n{position:absolute;top:-10px;left:14px;background:var(--accent);color:#07120F;font-family:var(--font-mono);font-size:13px;font-weight:600;padding:1px 8px;border-radius:10px}
+  .step .n{position:absolute;top:-10px;left:14px;background:var(--accent);color:#F4FAFA;font-family:var(--font-mono);font-size:13px;font-weight:600;padding:1px 8px;border-radius:10px}
   .pipe .sep{display:flex;align-items:center;justify-content:center;color:var(--line-strong)}
   .pipe .sep svg{width:18px;height:18px}
   @media (max-width:760px){.pipe{grid-template-columns:1fr;gap:16px}.pipe .sep{height:18px}}
@@ -650,31 +650,31 @@ disp(lr.eta)            % 6.6e-07</code></pre>
         type: 'value', name: 'wall-clock (s, log)', nameLocation: 'middle',
         nameGap: 26, nameTextStyle: { fontSize: 12, color: '#5A6B7A' },
         logBase: 10,
-        axisLabel: { fontSize: 11, color: '#9FB2BE' },
-        splitLine: { lineStyle: { color: '#1E303C' } }
+        axisLabel: { fontSize: 11, color: '#5A6B7A' },
+        splitLine: { lineStyle: { color: '#E3E7EA' } }
       },
       yAxis: {
         type: 'category', data: names,
-        axisLabel: { fontSize: 11, color: '#9FB2BE', width: 96, overflow: 'truncate' },
-        axisLine: { show: true, lineStyle: { color: '#2A4150' } },
+        axisLabel: { fontSize: 11, color: '#1C2733', width: 96, overflow: 'truncate' },
+        axisLine: { show: true, lineStyle: { color: '#C9D2D8' } },
         axisTick: { show: false }
       },
-      legend: { top: 0, left: 120, itemWidth: 14, itemHeight: 9, textStyle: { fontSize: 12, color: '#D9E4EA' } },
+      legend: { top: 0, left: 120, itemWidth: 14, itemHeight: 9, textStyle: { fontSize: 12, color: '#1C2733' } },
       series: [
         {
           name: 'Bisection only', type: 'bar', data: dBi,
           barWidth: 6, itemStyle: { color: '#8A97A3', borderRadius: 2 },
-          label: { show: true, position: 'right', fontSize: 10.5, color: '#9FB2BE', formatter: function(p){ return p.value + ' s'; } }
+          label: { show: true, position: 'right', fontSize: 10.5, color: '#5A6B7A', formatter: function(p){ return p.value + ' s'; } }
         },
         {
           name: 'Bisection + Secant (default)', type: 'bar', data: dSec,
           barWidth: 6, itemStyle: { color: '#0E7A76', borderRadius: 2 },
-          label: { show: true, position: 'right', fontSize: 10.5, color: '#4FB8B2', formatter: function(p){ return p.value + ' s'; } }
+          label: { show: true, position: 'right', fontSize: 10.5, color: '#0A5F5C', formatter: function(p){ return p.value + ' s'; } }
         },
         {
           name: 'Bisection + Newton', type: 'bar', data: dNew,
           barWidth: 6, itemStyle: { color: '#E8B23A', borderRadius: 2 },
-          label: { show: true, position: 'right', fontSize: 10.5, color: '#E8B23A', formatter: function(p){ return p.value + ' s'; } }
+          label: { show: true, position: 'right', fontSize: 10.5, color: '#8A5A00', formatter: function(p){ return p.value + ' s'; } }
         }
       ]
     };
