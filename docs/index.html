@@ -661,6 +661,9 @@ disp(lr.eta)            % 6.6e-07</code></pre>
         <h3>Result</h3>
         <div id="onl-summary"></div>
         <div id="onl-x"></div>
+        <div id="onl-dl" style="display:none;margin-top:16px">
+          <button id="onl-dl-btn" class="btn">Download x (CSV)</button>
+        </div>
       </div>
     </div>
     <p class="lead" style="margin-top:26px">The C++17 core runs in your browser via WebAssembly — the solve happens locally, nothing is uploaded. Source: <a href="docs/_wasm/bind.cpp">docs/_wasm/bind.cpp</a>.</p>
@@ -825,6 +828,23 @@ var PYRIM = {rows:74, cols:27, A:[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
     }
     if (rows.length > shown) body += '<tr><td colspan="3" class="dim">… ' + (rows.length - shown) + ' more non-zero entries</td></tr>';
     xe.innerHTML = head + body + '</table>';
+
+    var dl = document.getElementById('onl-dl');
+    var btn = document.getElementById('onl-dl-btn');
+    var dsName = document.getElementById('onl-data').value;
+    var csv = 'index,x\n';
+    for (var d = 0; d < x.length; d++) csv += (d + 1) + ',' + x[d] + '\n';
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    btn.onclick = function(){
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'smop_x_' + dsName + '_n' + x.length + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+    dl.style.display = '';
   }
 
   function parseRows(str){ // returns {A: flat col-major, rows, cols, b}
