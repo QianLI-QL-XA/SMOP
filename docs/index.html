@@ -211,22 +211,21 @@
     <div class="fblock"><span class="tag">Basis-pursuit denoise — solved with secant level-set, not plain bisection</span>
 min&nbsp; ‖x‖₁&nbsp; s.t.&nbsp; ‖Ax − b‖₂ ≤ δ,&nbsp;&nbsp; x ∈ ℝⁿ</div>
 
-    <p class="lead">SMOP does <strong>not</strong> rely on plain bisection: it implements the
-    <span class="math">sieving-based secant level-set method</span> of Li, Sun &amp; Yuan (2024).
-    The Lasso path <span class="math">x(μ) = argmin ½‖Ax−b‖² + μ‖x‖₁</span> traces a Pareto frontier;
-    the constraint <span class="math">ψ(μ) = ‖Ax(μ)−b‖ = δ</span> is solved by an outer
-    <span class="math">secant / Newton / bisection</span> root-finding loop, while each Lasso subproblem
-    is confined to a small active set by <strong>adaptive sieving</strong>.</p>
+    <p class="lead">SMOP implements the <span class="math">sieving-based secant level-set method</span>
+    of Li, Sun &amp; Yuan (2024): it walks the Lasso path
+    <span class="math">x(μ) = argmin ½‖Ax−b‖² + μ‖x‖₁</span> and roots the constraint
+    <span class="math">ψ(μ) = ‖Ax(μ)−b‖ = δ</span> with a fast outer secant loop — no plain bisection —
+    while <strong>adaptive sieving</strong> keeps every inner Lasso solve on a small active set.</p>
 
     <div class="pipe">
       <div class="step"><span class="n">1</span><h4>Level-set loop</h4><p>Root-finding on ψ(μ)−δ = 0: secant steps (default) with analytic Newton and guarded bisection fallback, validated every iteration.</p></div>
       <div class="sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
       <div class="step"><span class="n">2</span><h4>Adaptive sieving</h4><p>Each Lasso subproblem is warm-started on a small active set and augmented from the KKT residual, following the reference control_addpram budget.</p></div>
       <div class="sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-      <div class="step"><span class="n">3</span><h4>Subproblem dispatch</h4><p>Three solvers with a strict preference order — smoothing Newton, then SSNAL, and ADMM only as a last resort.</p></div>
+      <div class="step"><span class="n">3</span><h4>Inner solvers</h4><p>Three solvers with a strict preference order — smoothing Newton, then SSNAL, and ADMM only as a last resort.</p></div>
     </div>
 
-    <h3>Subproblem dispatch</h3>
+    <h3>Inner-solver dispatch</h3>
     <div class="tblwrap"><table>
       <caption>Which inner solver runs, and when</caption>
       <colgroup><col style="width:26%"><col style="width:22%"><col style="width:52%"></colgroup>

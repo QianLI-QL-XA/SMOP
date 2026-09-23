@@ -1,4 +1,4 @@
-# smop
+# SMOP
 
 **Level-set method for sparse optimization with a least-squares constraint.**
 
@@ -8,7 +8,7 @@
 min  ‖x‖₁    s.t.    ‖Ax − b‖₂ ≤ δ
 ```
 
-`smop` implements the *sieving-based secant level-set method* of
+`SMOP` implements the *sieving-based secant level-set method* of
 
 **Qian Li, Defeng Sun, Yancheng Yuan**, *"An Efficient Sieving-Based Secant Method*
 
