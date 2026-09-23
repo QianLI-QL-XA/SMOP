@@ -160,6 +160,31 @@
   .bib .s{color:#E8C4A0}
 
   footer{border-top:1px solid var(--line);margin-top:64px;padding:26px 0 44px;color:var(--ink-faint);font-size:14.5px}
+  /* ---------- online demo ---------- */
+  .onl-grid{display:grid;grid-template-columns:minmax(290px,340px) 1fr;gap:18px;align-items:start}
+  @media (max-width:860px){.onl-grid{grid-template-columns:1fr}}
+  .panel{border:1px solid var(--line);border-radius:10px;background:#fff;padding:18px 20px;box-shadow:0 1px 2px rgba(20,35,45,.04)}
+  .panel h3{margin:0 0 6px;font-size:18px}
+  .fld{display:block;margin:13px 0;font-size:14px;font-weight:600;color:var(--ink-soft)}
+  .fld input,.fld select{display:block;width:100%;margin-top:5px;padding:8px 10px;border:1px solid var(--line-strong);border-radius:6px;font-family:var(--font-mono);font-size:14px;background:#fff;color:var(--ink)}
+  .fld input:focus,.fld select:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .chk{display:block;margin:12px 0;font-size:14.5px;color:var(--ink-soft);font-weight:600}
+  .btn{display:inline-block;margin-top:6px;padding:10px 26px;border:none;border-radius:8px;background:linear-gradient(180deg,#0E8A86,#0B6E6B);color:#F4FAFA;font-size:15.5px;font-weight:700;cursor:pointer;font-family:var(--font-sans)}
+  .btn:hover{filter:brightness(1.1)}
+  .btn:disabled{opacity:.55;cursor:wait}
+  .onl-status{font-family:var(--font-mono);font-size:13px;color:var(--ink-faint);margin:14px 0 0;min-height:18px}
+  .onl-status.bad{color:var(--warn)}
+  .mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px;margin:6px 0 16px}
+  .mcard{border:1px solid var(--line);border-radius:8px;background:var(--bg-soft);padding:9px 10px;text-align:center}
+  .mcard b{display:block;font-size:17.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .mcard span{font-size:12px;color:var(--ink-faint)}
+  .xtable{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+  .xtable th,.xtable td{padding:5px 10px;border-bottom:1px solid var(--line);text-align:right}
+  .xtable th{background:var(--bg-soft);color:var(--ink-soft);font-weight:600;font-size:13px}
+  .xtable td:first-child{text-align:left;color:var(--ink-faint)}
+  .xtable .zero{color:#B9C4CC}
+  #onl-summary,#onl-x{min-height:40px}
+
   .foot-in{max-width:1600px;margin:0 auto;padding:0 32px;display:flex;gap:14px;flex-wrap:wrap;align-items:baseline}
 
   /* highlight.js overrides */
@@ -185,6 +210,7 @@
       <a href="#results">Results</a>
       <a href="#install">Install</a>
       <a href="#quickstart">Quickstart</a>
+      <a href="#online">Online</a>
     </div>
   </div>
 </nav>
@@ -598,6 +624,54 @@ disp(lr.eta)            % 6.6e-07</code></pre>
   </div>
 </footer>
 
+
+<!-- ===== 视图：Online ===== -->
+<section id="online">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">05</span><h2>Online demo</h2><span class="rule"></span></div>
+    <p class="lead">The C++17 core runs in your browser via WebAssembly — the solve happens locally, nothing is uploaded. Source: <a href="docs/_wasm/bind.cpp">docs/_wasm/bind.cpp</a>.</p>
+
+    <div class="onl-grid">
+      <div class="panel">
+        <h3>Problem</h3>
+        <label class="fld">Problem type
+          <select id="onl-type">
+            <option value="bmop">BMOP — min ‖x‖₁ s.t. ‖Ax−b‖₂ ≤ δ</option>
+            <option value="lasso">Lasso — ½‖Ax−b‖₂² + λ‖x‖₁</option>
+          </select>
+        </label>
+        <label class="fld">Data set
+          <select id="onl-data">
+            <option value="pyrim">pyrim (74 × 27, UCI, scaled)</option>
+            <option value="random">random Gaussian (custom m × n)</option>
+          </select>
+        </label>
+        <label class="fld" id="fld-delta">δ
+          <input id="onl-delta" type="number" step="any" value="0.5"></label>
+        <label class="fld" id="fld-lambda" style="display:none">λ
+          <input id="onl-lambda" type="number" step="any" value="0.01"></label>
+        <label class="fld" id="fld-m">m
+          <input id="onl-m" type="number" step="1" value="40"></label>
+        <label class="fld" id="fld-n">n
+          <input id="onl-n" type="number" step="1" value="150"></label>
+        <label class="fld">stopping tolerance
+          <input id="onl-tol" type="number" step="any" value="1e-6"></label>
+        <label class="fld">time limit (s)
+          <input id="onl-time" type="number" step="any" value="60"></label>
+        <label class="chk"><input id="onl-as" type="checkbox" checked> adaptive sieving</label>
+        <button id="onl-run" class="btn">Run</button>
+        <p id="onl-status" class="onl-status">Ready. The WASM core (~300 KB) loads on first run.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Result</h3>
+        <div id="onl-summary"></div>
+        <div id="onl-x"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
 <script>
@@ -682,8 +756,144 @@ disp(lr.eta)            % 6.6e-07</code></pre>
     window.addEventListener('resize', function(){ chart2.resize(); });
   }
 
+var PYRIM = {rows:74, cols:27, A:[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -1.0, -0.5, -0.5, -1.0, -1.0, 0.0, -0.5, -0.5, -1.0, -1.0, 0.0, 0.0, -0.5, -0.5, 0.0, 0.0, -0.5, -1.0, -1.0, -0.5, -0.5, -0.5, 1.0, 0.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -0.5, -0.5, -0.5, -0.5, 0.0, -1.0, -0.5, -1.0, -0.5, -0.5, -0.5, 0.0, -0.5, -0.5, -1.0, -1.0, 0.5, -1.0, -1.0, 0.0, -1.0, -0.5, -0.5, -1.0, -1.0, -1.0, -0.6, -1.0, -1.0, -0.6, 0.2, 1.0, -0.2, 0.6, -0.2, -0.2, 0.6, -0.2, -0.2, 0.2, -0.2, -0.2, -0.2, -1.0, -1.0, -0.6, -0.2, 0.2, -0.6, -1.0, -0.6, -0.6, -0.2, -0.6, -0.6, -0.6, -0.2, 0.6, -0.2, -0.2, -0.2, -0.2, -0.2, -0.6, -1.0, -1.0, -1.0, -0.6, -0.6, -1.0, -0.2, 0.2, -1.0, -1.0, -0.2, 1.0, -0.6, -0.2, -0.6, -0.6, 1.0, -1.0, -0.2, -0.6, 0.2, -0.6, 0.2, 0.6, -0.6, -1.0, 0.2, -1.0, -1.0, -0.6, -1.0, -0.2, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -0.25, 1.0, -1.0, -0.25, -1.0, -1.0, -0.5, -1.0, -1.0, -0.75, -0.5, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -0.75, -1.0, -1.0, -1.0, -1.0, -0.5, -1.0, -1.0, -1.0, -1.0, 0.5, -0.25, -0.5, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 0.75, -1.0, -1.0, -1.0, 0.0, -1.0, 0.0, -0.5, -1.0, -1.0, -0.75, -1.0, -1.0, -1.0, -1.0, -1.0, 0.5, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, -1.0, 0.0, 0.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 0.0, -1.0, 0.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, 1.0, 1.0, 1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, -1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 0.0, 0.0, -1.0, -1.0, 0.0, -1.0, -1.0, 0.0, 1.0, 0.0, 0.0, -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, 1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, 0.3325, -0.3325, -0.3325, -0.3325, -1.0, -1.0, 0.3325, -0.3325, -1.0, -0.3325, -1.0, -0.3325, -1.0, -0.3325, 1.0, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -1.0, -0.3325, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, -0.3325, -0.3325, -1.0, -1.0, -0.3325, -0.3325, 1.0, -0.3325, 0.3325, -0.3325, -0.3325, -1.0, -0.3325, 1.0, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -1.0, 0.3325, -1.0, -1.0, -1.0, -1.0, -0.3325, -0.3325, -1.0, -1.0, -1.0, -0.2, -1.0, -1.0, -1.0, -0.6, -0.6, -0.6, -0.6, -0.6, -0.6, -0.6, -0.6, -0.6, -0.2, -1.0, -0.6, -0.6, -1.0, -1.0, -0.2, -0.6, -0.6, -1.0, -1.0, 0.2, 0.2, -1.0, -0.6, -0.2, 0.2, -0.6, -1.0, -1.0, -1.0, -0.6, -0.6, 0.2, -0.2, -1.0, -1.0, -1.0, 0.2, 1.0, -1.0, -0.6, -0.6, -1.0, -1.0, -0.6, -0.6, -0.6, -0.6, -0.2, -1.0, -0.6, -1.0, -0.6, -0.6, -0.6, -0.2, -0.6, -0.6, -1.0, -1.0, -0.2, -1.0, -1.0, 0.2, -1.0, -0.6, -0.6, -1.0, 0.2, 0.6, -0.2, -0.2, -1.0, -0.6, -0.6, -0.2, -0.2, -0.6, -0.2, 0.2, -0.2, -0.6, -0.2, -0.2, -0.6, 0.6, 0.2, 1.0, -0.2, -0.6, -0.2, -0.6, -0.6, -0.2, -0.6, -0.6, -0.6, -0.6, -0.6, -0.2, -0.6, -0.6, -0.6, -0.6, -0.2, -0.6, -0.2, -0.6, -0.2, 0.2, -0.2, -0.2, -0.6, -0.6, -0.2, -0.6, -0.6, -0.2, -0.6, -0.6, -0.2, -0.2, -0.2, -0.2, -0.6, 0.6, -0.2, 0.2, -0.2, 0.2, -0.6, -0.6, 0.2, 0.2, -0.6, -0.2, -0.6, -0.2, -0.2, -0.2, -0.6, 1.0, -0.6, 0.2, -0.2, 0.6, -1.0, -1.0, -1.0, -0.2, 1.0, -1.0, 0.6, -0.6, -0.2, -0.2, 0.2, -0.2, -0.2, 0.2, -0.6, -0.6, -0.2, -1.0, 0.2, -1.0, -1.0, 0.2, -1.0, -1.0, -1.0, -1.0, -1.0, -0.6, -1.0, -1.0, -1.0, -1.0, -0.2, -1.0, -0.2, -1.0, -0.6, -0.6, 1.0, -0.6, -1.0, -1.0, 1.0, -1.0, -0.2, -0.2, -0.6, -1.0, -0.2, 0.6, -0.6, -0.2, -1.0, -0.2, -0.2, -0.6, 0.2, -0.6, -1.0, -1.0, -0.6, -0.6, -1.0, 1.0, -0.6, -0.2, 0.2, 1.0, -1.0, -0.2, -1.0, -0.75, -1.0, -0.5, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -0.5, -1.0, -1.0, -1.0, 0.0, -1.0, -0.5, -0.75, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.5, -1.0, -1.0, -1.0, 0.5, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -0.5, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.75, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 0.0, 0.0, -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, 1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, 0.0, -1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 0.0, -1.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 0.0, -1.0, 0.0, 1.0, 0.0, -1.0, -1.0, 1.0, -1.0, 0.0, 0.0, -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, 1.0, 0.0, 0.0, 1.0, -1.0, -1.0, 0.0, -1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 0.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, 0.0, 1.0, -1.0, -1.0, 1.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0, -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.0, 0.0, 0.0, -1.0, -1.0, -1.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, -1.0, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, -1.0, -0.2, -0.2, -0.6, -0.6, -1.0, -1.0, -1.0, -0.6, -0.6, -1.0, -0.6, -0.2, -0.6, -0.6, -0.6, -0.6, -1.0, -0.2, -0.2, 1.0, -0.6, -1.0, -0.6, -1.0, -1.0, -0.6, -1.0, -1.0, -1.0, -1.0, -1.0, -0.6, -1.0, -1.0, -1.0, -1.0, -0.6, -1.0, -0.6, -1.0, -0.6, 0.2, -0.6, -0.6, -1.0, -1.0, -0.6, -1.0, -0.6, -0.6, -1.0, -1.0, -0.6, -0.6, -0.6, -0.6, -1.0, 0.2, -0.6, -0.2, -0.6, -0.2, -1.0, -1.0, -0.2, -0.2, -1.0, -0.6, -1.0, -0.6, -0.6, -0.6, -1.0, 0.2, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, 0.3325, -0.3325, 0.3325, -1.0, -0.3325, -0.3325, -0.3325, 0.3325, -0.3325, -0.3325, -0.3325, -0.3325, 0.3325, -0.3325, -0.3325, -0.3325, 0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, 1.0, 0.3325, -0.3325, -0.3325, 0.3325, -0.3325, -0.3325, -0.3325, 1.0, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, 0.3325, -0.3325, -0.3325, -0.3325, 0.3325, -0.3325, 0.3325, 0.3325, 1.0, -0.3325, -0.3325, -0.3325, 0.3325, 0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, -0.3325, 0.3325, -0.3325, -0.3325, -1.0, -1.0, -1.0, -1.0, -1.0, -0.3325, 1.0, -1.0, 0.3325, -1.0, -1.0, -1.0, -1.0, 0.3325, -1.0, -1.0, 0.3325, -1.0, 0.3325, -1.0, -1.0, -1.0, 0.3325, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -0.3325, 0.3325, -1.0, -1.0, 0.3325, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, 0.3325, -1.0, -1.0, -1.0, 0.3325, -1.0, -0.3325, 0.3325, -0.3325, -0.3325, -1.0, -1.0, 0.3325, -0.3325, -1.0, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.3325, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.3325, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.3325, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, -1.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, -1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -0.3325, -0.3325, -1.0, -0.3325, -1.0, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, -0.3325, -1.0, -0.3325, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -0.3325, -0.3325, -1.0, -1.0, -0.3325, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, -0.3325, -1.0, -1.0, -1.0, -0.3325, -1.0, 1.0, -0.3325, 0.3325, -0.3325, -1.0, -1.0, -0.3325, 1.0, -1.0, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -0.3325, -1.0, -1.0], b:[0.568, 0.589, 0.621, 0.628, 0.634, 0.649, 0.661, 0.665, 0.671, 0.7, 0.716, 0.717, 0.734, 0.741, 0.749, 0.753, 0.756, 0.772, 0.805, 0.554, 0.628, 0.638, 0.829, 0.584, 0.602, 0.628, 0.595, 0.646, 0.545, 0.675, 0.571, 0.9, 0.833, 0.582, 0.587, 0.549, 0.742, 0.634, 0.639, 0.1, 0.547, 0.568, 0.516, 0.9, 0.538, 0.531, 0.763, 0.619, 0.613, 0.619, 0.859, 0.54, 0.893, 0.838, 0.897, 0.745, 0.56, 0.584, 0.9, 0.893, 0.674, 0.569, 0.579, 0.642, 0.72, 0.619, 0.632, 0.451, 0.572, 0.738, 0.561, 0.763, 0.624, 0.534]};
+
+  /* ---------- online demo (WASM) ---------- */
+  var SMOP_PROMISE = null;
+  function ensureWasm(){
+    if (SMOP_PROMISE) return SMOP_PROMISE;
+    SMOP_PROMISE = new Promise(function(res, rej){
+      var scr = document.createElement('script');
+      scr.src = '_wasm/smop.js';
+      scr.onload = function(){
+        if (typeof SMOPModule !== 'function'){ rej(new Error('SMOPModule factory missing')); return; }
+        SMOPModule({ locateFile: function(f){ return '_wasm/' + f; } }).then(res, rej);
+      };
+      scr.onerror = function(){ rej(new Error('failed to load _wasm/smop.js')); };
+      document.head.appendChild(scr);
+    });
+    return SMOP_PROMISE;
+  }
+
+  function fmt(v, d){ return Number(v).toPrecision(d == null ? 6 : d); }
+
+  function renderOnline(r){
+    var ok = (r.status === 0);
+    var sum = document.getElementById('onl-summary');
+    var stat = ok ? '<b style="color:#0B6E6B">converged</b>' : ('<b style="color:#C2540A">status ' + r.status + '</b> <span class="dim">' + (r.msg || '') + '</span>');
+    sum.innerHTML =
+      '<div class="mcards">' +
+        '<div class="mcard"><b>' + fmt(r.obj) + '</b><span>' + (isBmop ? '‖x‖₁' : 'objective') + '</span></div>' +
+        '<div class="mcard"><b>' + fmt(r.psi, 6) + '</b><span>‖Ax−b‖₂</span></div>' +
+        '<div class="mcard"><b>' + fmt(r.mu, 6) + '</b><span>μ / λ</span></div>' +
+        '<div class="mcard"><b>' + fmt(r.time, 4) + ' s</b><span>wall-clock</span></div>' +
+        '<div class="mcard"><b>' + r.nnz + '</b><span>nnz(x)</span></div>' +
+        '<div class="mcard"><b>' + r.iter + '</b><span>outer iters</span></div>' +
+      '</div>' +
+      '<p class="note">' + stat +
+      (isBmop ? ' · bisection ' + r.iter_bisection + ', secant/newton ' + r.iter_newton_or_secant +
+               ' · smoothing ' + r.iter_smoothing + ', SSNAL ' + r.iter_ssn + ', ADMM ' + r.iter_admm : '') +
+      '</p>';
+    // non-zero entries of x
+    var x = r.x || [];
+    var rows = [];
+    for (var i = 0; i < x.length; i++){
+      if (Math.abs(x[i]) > 1e-10) rows.push([i, x[i]]);
+    }
+    rows.sort(function(a,b){ return Math.abs(b[1]) - Math.abs(a[1]); });
+    var xe = document.getElementById('onl-x');
+    if (rows.length === 0){
+      xe.innerHTML = '<p class="note">all-zero solution</p>';
+      return;
+    }
+    var head = '<table class="xtable"><tr><th>index</th><th>x<sub>i</sub></th><th>|x<sub>i</sub>|</th></tr>';
+    var body = '';
+    var shown = Math.min(rows.length, 24);
+    for (var k = 0; k < shown; k++){
+      body += '<tr><td>' + (rows[k][0]+1) + '</td><td>' + fmt(rows[k][1], 8) + '</td><td>' + fmt(Math.abs(rows[k][1]), 8) + '</td></tr>';
+    }
+    if (rows.length > shown) body += '<tr><td colspan="3" class="dim">… ' + (rows.length - shown) + ' more non-zero entries</td></tr>';
+    xe.innerHTML = head + body + '</table>';
+  }
+
+  function parseRows(str){ // returns {A: flat col-major, rows, cols, b}
+    var v = str.trim();
+    if (!v) throw new Error('empty input');
+    if (v[0] === '[' || v[0] === '{'){
+      var o = JSON.parse(v);
+      if (Array.isArray(o)) return { A: o[0], b: o[1] };
+      return o;
+    }
+    throw new Error('unsupported format: paste a 2-row JSON [A, b] with A as a flat column-major array');
+  }
+
+  var isBmop = true;
+  document.getElementById('onl-type').addEventListener('change', function(e){
+    isBmop = e.target.value === 'bmop';
+    document.getElementById('fld-delta').style.display = isBmop ? '' : 'none';
+    document.getElementById('fld-lambda').style.display = isBmop ? 'none' : '';
+  });
+  document.getElementById('onl-data').addEventListener('change', function(e){
+    var rnd = e.target.value === 'random';
+    document.getElementById('fld-m').style.display = rnd ? '' : 'none';
+    document.getElementById('fld-n').style.display = rnd ? '' : 'none';
+  });
+
+  document.getElementById('onl-run').addEventListener('click', function(){
+    var btn = document.getElementById('onl-run');
+    var st = document.getElementById('onl-status');
+    st.className = 'onl-status';
+    st.textContent = 'Loading the WASM core…';
+    btn.disabled = true;
+    ensureWasm().then(function(mod){
+      st.textContent = 'Solving…';
+      setTimeout(function(){
+        try {
+          var A, b, m, cols;
+          var ds = document.getElementById('onl-data').value;
+          if (ds === 'pyrim'){
+            m = PYRIM.rows; cols = PYRIM.cols;
+            A = PYRIM.A; b = PYRIM.b;
+          } else {
+            m = parseInt(document.getElementById('onl-m').value, 10) || 40;
+            cols = parseInt(document.getElementById('onl-n').value, 10) || 150;
+            A = new Array(m * cols);
+            b = new Array(m);
+            for (var j = 0; j < cols; j++)
+              for (var i = 0; i < m; i++)
+                A[j * m + i] = (Math.random() * 2 - 1) * 1.0;
+            for (var i2 = 0; i2 < m; i2++) b[i2] = Math.random() * 2 - 1;
+          }
+          var tol = parseFloat(document.getElementById('onl-tol').value) || 1e-6;
+          var tlim = parseFloat(document.getElementById('onl-time').value) || 60;
+          var useAs = document.getElementById('onl-as').checked;
+          var delta = parseFloat(document.getElementById('onl-delta').value);
+          var lam = parseFloat(document.getElementById('onl-lambda').value);
+          var json;
+          if (isBmop){
+            json = mod.solve_bmop(A, m, cols, b, delta, tol, tlim, 0, useAs);
+          } else {
+            json = mod.solve_lasso(A, m, cols, b, lam, tol, tlim, 0);
+          }
+          var r = JSON.parse(json);
+          st.className = 'onl-status';
+          st.textContent = 'Done — computed locally in your browser.';
+          renderOnline(r);
+        } catch (err) {
+          st.className = 'onl-status bad';
+          st.textContent = 'error: ' + err.message;
+        }
+        btn.disabled = false;
+      }, 30);
+    }, function(err){
+      st.className = 'onl-status bad';
+      st.textContent = 'WASM load failed: ' + err.message + ' (open the page over http(s), e.g. the published site)';
+      btn.disabled = false;
+    });
+  });
+
   /* view routing: click a nav link to enter that page (hash-based), no scrolling */
-  var VIEWS = ['home','method','results','install','quickstart'];
+  var VIEWS = ['home','method','results','install','quickstart','online'];
   function showView(id){
     if (id === 'citing') id = 'quickstart';
     if (VIEWS.indexOf(id) < 0) id = 'home';
