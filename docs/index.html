@@ -174,6 +174,7 @@
   .btn:disabled{opacity:.55;cursor:wait}
   .onl-status{font-family:var(--font-mono);font-size:13px;color:var(--ink-faint);margin:14px 0 0;min-height:18px}
   .onl-status.bad{color:var(--warn)}
+  .onl-status.ok{color:var(--accent-strong)}
   .mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px;margin:6px 0 16px}
   .mcard{border:1px solid var(--line);border-radius:8px;background:var(--bg-soft);padding:9px 10px;text-align:center}
   .mcard b{display:block;font-size:17.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
@@ -629,6 +630,7 @@ disp(lr.eta)            % 6.6e-07</code></pre>
           <select id="onl-data">
             <option value="pyrim">pyrim (74 × 27, UCI, scaled)</option>
             <option value="random">random Gaussian (custom m × n)</option>
+            <option value="upload">upload A and b (.xlsx / .xls / .csv)</option>
           </select>
         </label>
         <label class="fld" id="fld-delta">δ
@@ -639,6 +641,13 @@ disp(lr.eta)            % 6.6e-07</code></pre>
           <input id="onl-m" type="number" step="1" value="40"></label>
         <label class="fld" id="fld-n">n
           <input id="onl-n" type="number" step="1" value="150"></label>
+        <div id="fld-upload" style="display:none">
+          <label class="fld">Matrix A (.xlsx / .xls / .csv)
+            <input type="file" id="onl-fileA" accept=".xlsx,.xls,.csv"></label>
+          <label class="fld">Vector b (.xlsx / .xls / .csv)
+            <input type="file" id="onl-fileb" accept=".xlsx,.xls,.csv"></label>
+          <p id="onl-filestat" class="onl-status" style="font-size:13px;line-height:1.5"></p>
+        </div>
         <label class="fld">stopping tolerance
           <input id="onl-tol" type="number" step="any" value="1e-6"></label>
         <label class="fld">time limit (s)
@@ -673,6 +682,7 @@ disp(lr.eta)            % 6.6e-07</code></pre>
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
 <script>
@@ -834,11 +844,93 @@ var PYRIM = {rows:74, cols:27, A:[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
     document.getElementById('fld-delta').style.display = isBmop ? '' : 'none';
     document.getElementById('fld-lambda').style.display = isBmop ? 'none' : '';
   });
+  var onlUp = { A: null, m: 0, n: 0, b: null };
   document.getElementById('onl-data').addEventListener('change', function(e){
-    var rnd = e.target.value === 'random';
+    var v = e.target.value;
+    var rnd = v === 'random';
+    var up = v === 'upload';
     document.getElementById('fld-m').style.display = rnd ? '' : 'none';
     document.getElementById('fld-n').style.display = rnd ? '' : 'none';
+    document.getElementById('fld-upload').style.display = up ? '' : 'none';
   });
+  function cellNum(v){
+    if (typeof v === 'number') return isFinite(v) ? v : NaN;
+    if (typeof v === 'string'){ var t = v.trim().replace(/,/g, ''); if (t === '') return NaN; var x = Number(t); return isFinite(x) ? x : NaN; }
+    return NaN;
+  }
+  function readWorkbook(file, cb){
+    var rd = new FileReader();
+    rd.onload = function(ev){
+      try {
+        var wb = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+        if (!wb.SheetNames || !wb.SheetNames.length) return cb(new Error('no sheet in ' + file.name));
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        var rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: null });
+        cb(null, rows);
+      } catch (e){ cb(e); }
+    };
+    rd.onerror = function(){ cb(new Error('cannot read ' + file.name)); };
+    rd.readAsArrayBuffer(file);
+  }
+  function parseA(rows, name){
+    if (!rows || rows.length === 0) throw new Error(name + ': empty matrix');
+    var m = rows.length, n = rows[0].length;
+    if (n === 0) throw new Error(name + ': matrix has no columns');
+    for (var i = 0; i < m; i++){
+      if (rows[i].length !== n) throw new Error(name + ': row ' + (i + 1) + ' has ' + rows[i].length + ' columns, expected ' + n);
+      for (var j = 0; j < n; j++){
+        var x = cellNum(rows[i][j]);
+        if (isNaN(x)) throw new Error(name + ': non-numeric cell at row ' + (i + 1) + ', column ' + (j + 1));
+        rows[i][j] = x;
+      }
+    }
+    if (m > 5000 || n > 5000) throw new Error(name + ': dimensions ' + m + 'x' + n + ' exceed the 5000x5000 limit');
+    if (m * n > 1000000) throw new Error(name + ': ' + m + 'x' + n + ' = ' + (m * n) + ' entries exceed the 1,000,000-entry browser limit');
+    var A = new Array(m * n);
+    for (var j2 = 0; j2 < n; j2++)
+      for (var i2 = 0; i2 < m; i2++) A[j2 * m + i2] = rows[i2][j2];
+    return { A: A, m: m, n: n };
+  }
+  function parseB(rows, name, m){
+    if (!rows || rows.length === 0) throw new Error(name + ': empty vector');
+    var r = rows.length, c = rows[0].length;
+    if (c === 0) throw new Error(name + ': empty vector');
+    var b;
+    if (c === 1) b = rows.map(function(rw){ return rw[0]; });
+    else if (r === 1) b = rows[0].slice(0);
+    else throw new Error(name + ': must be a single column or a single row, got ' + r + 'x' + c);
+    for (var i = 0; i < b.length; i++){
+      var x = cellNum(b[i]);
+      if (isNaN(x)) throw new Error(name + ': non-numeric value at entry ' + (i + 1));
+      b[i] = x;
+    }
+    if (b.length !== m) throw new Error(name + ': length ' + b.length + ' does not match A rows ' + m);
+    return b;
+  }
+  function refreshUpload(){
+    var st = document.getElementById('onl-filestat');
+    var fa = document.getElementById('onl-fileA').files[0];
+    var fb = document.getElementById('onl-fileb').files[0];
+    if (!fa || !fb){ st.className = 'onl-status'; st.textContent = fa && !fb ? 'choose vector b too' : (!fa && fb ? 'choose matrix A too' : 'choose matrix A and vector b'); return; }
+    readWorkbook(fa, function(errA, rowsA){
+      if (errA){ st.className = 'onl-status bad'; st.textContent = 'A: ' + errA.message; return; }
+      var a;
+      try { a = parseA(rowsA, fa.name); }
+      catch (e){ st.className = 'onl-status bad'; st.textContent = 'A: ' + e.message; return; }
+      onlUp.A = a.A; onlUp.m = a.m; onlUp.n = a.n;
+      readWorkbook(fb, function(errB, rowsB){
+        if (errB){ st.className = 'onl-status bad'; st.textContent = 'b: ' + errB.message; return; }
+        try {
+          var b = parseB(rowsB, fb.name, a.m);
+          onlUp.b = b;
+          st.className = 'onl-status ok';
+          st.textContent = 'ok — A: ' + a.m + 'x' + a.n + ', b: ' + b.length + '. ready to run';
+        } catch (e){ st.className = 'onl-status bad'; st.textContent = 'b: ' + e.message; }
+      });
+    });
+  }
+  document.getElementById('onl-fileA').addEventListener('change', refreshUpload);
+  document.getElementById('onl-fileb').addEventListener('change', refreshUpload);
 
   document.getElementById('onl-run').addEventListener('click', function(){
     var btn = document.getElementById('onl-run');
@@ -860,6 +952,9 @@ var PYRIM = {rows:74, cols:27, A:[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
           if (ds === 'pyrim'){
             m = PYRIM.rows; cols = PYRIM.cols;
             A = PYRIM.A; b = PYRIM.b;
+          } else if (ds === 'upload'){
+            if (!onlUp.A || !onlUp.b) throw new Error('upload and validate matrix A and vector b first');
+            m = onlUp.m; cols = onlUp.n; A = onlUp.A; b = onlUp.b;
           } else {
             m = parseInt(document.getElementById('onl-m').value, 10) || 40;
             cols = parseInt(document.getElementById('onl-n').value, 10) || 150;
