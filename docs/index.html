@@ -666,7 +666,7 @@ disp(lr.eta)            % 6.6e-07</code></pre>
         </div>
       </div>
     </div>
-    <p class="lead" style="margin-top:26px">The C++17 core runs in your browser via WebAssembly — the solve happens locally, nothing is uploaded. Source: <a href="docs/_wasm/bind.cpp">docs/_wasm/bind.cpp</a>.</p>
+    <p class="lead" style="margin-top:26px">The C++17 core runs in your browser via WebAssembly — the solve happens locally, nothing is uploaded. This demo targets small-scale experiments; for large-scale data, please download the package and run it on your machine. Source: <a href="docs/_wasm/bind.cpp">docs/_wasm/bind.cpp</a>.</p>
   </div>
 </section>
 
@@ -810,25 +810,6 @@ var PYRIM = {rows:74, cols:27, A:[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
       '</p>';
     // non-zero entries of x
     var x = r.x || [];
-    var rows = [];
-    for (var i = 0; i < x.length; i++){
-      if (Math.abs(x[i]) > 1e-10) rows.push([i, x[i]]);
-    }
-    rows.sort(function(a,b){ return Math.abs(b[1]) - Math.abs(a[1]); });
-    var xe = document.getElementById('onl-x');
-    if (rows.length === 0){
-      xe.innerHTML = '<p class="note">all-zero solution</p>';
-      return;
-    }
-    var head = '<table class="xtable"><tr><th>index</th><th>x<sub>i</sub></th><th>|x<sub>i</sub>|</th></tr>';
-    var body = '';
-    var shown = Math.min(rows.length, 24);
-    for (var k = 0; k < shown; k++){
-      body += '<tr><td>' + (rows[k][0]+1) + '</td><td>' + fmt(rows[k][1], 8) + '</td><td>' + fmt(Math.abs(rows[k][1]), 8) + '</td></tr>';
-    }
-    if (rows.length > shown) body += '<tr><td colspan="3" class="dim">… ' + (rows.length - shown) + ' more non-zero entries</td></tr>';
-    xe.innerHTML = head + body + '</table>';
-
     var dl = document.getElementById('onl-dl');
     var btn = document.getElementById('onl-dl-btn');
     var dsName = document.getElementById('onl-data').value;
@@ -845,6 +826,24 @@ var PYRIM = {rows:74, cols:27, A:[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
       document.body.removeChild(a);
     };
     dl.style.display = '';
+    var rows = [];
+    for (var i = 0; i < x.length; i++){
+      if (Math.abs(x[i]) > 1e-10) rows.push([i, x[i]]);
+    }
+    rows.sort(function(a,b){ return Math.abs(b[1]) - Math.abs(a[1]); });
+    var xe = document.getElementById('onl-x');
+    if (rows.length === 0){
+      xe.innerHTML = '<p class="note">all-zero solution (download still available)</p>';
+      return;
+    }
+    var head = '<table class="xtable"><tr><th>index</th><th>x<sub>i</sub></th><th>|x<sub>i</sub>|</th></tr>';
+    var body = '';
+    var shown = Math.min(rows.length, 24);
+    for (var k = 0; k < shown; k++){
+      body += '<tr><td>' + (rows[k][0]+1) + '</td><td>' + fmt(rows[k][1], 8) + '</td><td>' + fmt(Math.abs(rows[k][1]), 8) + '</td></tr>';
+    }
+    if (rows.length > shown) body += '<tr><td colspan="3" class="dim">… ' + (rows.length - shown) + ' more non-zero entries</td></tr>';
+    xe.innerHTML = head + body + '</table>';
   }
 
   function parseRows(str){ // returns {A: flat col-major, rows, cols, b}
