@@ -629,7 +629,6 @@ disp(lr.eta)            % 6.6e-07</code></pre>
 <section id="online">
   <div class="wrap">
     <div class="sec-head"><span class="sec-no">05</span><h2>Online demo</h2><span class="rule"></span></div>
-    <p class="lead">The C++17 core runs in your browser via WebAssembly — the solve happens locally, nothing is uploaded. Source: <a href="docs/_wasm/bind.cpp">docs/_wasm/bind.cpp</a>.</p>
 
     <div class="onl-grid">
       <div class="panel">
@@ -669,6 +668,7 @@ disp(lr.eta)            % 6.6e-07</code></pre>
         <div id="onl-x"></div>
       </div>
     </div>
+    <p class="lead" style="margin-top:26px">The C++17 core runs in your browser via WebAssembly — the solve happens locally, nothing is uploaded. Source: <a href="docs/_wasm/bind.cpp">docs/_wasm/bind.cpp</a>.</p>
   </div>
 </section>
 
@@ -843,6 +843,11 @@ var PYRIM = {rows:74, cols:27, A:[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
     var btn = document.getElementById('onl-run');
     var st = document.getElementById('onl-status');
     st.className = 'onl-status';
+    if (location.protocol === 'file:'){
+      st.className = 'onl-status bad';
+      st.textContent = 'file:// pages cannot load WebAssembly. Open this page over http(s) — e.g. serve it with "python -m http.server" in the docs/ folder, or use the published site https://qianli-ql-xa.github.io/SMOP/#online.';
+      return;
+    }
     st.textContent = 'Loading the WASM core…';
     btn.disabled = true;
     ensureWasm().then(function(mod){
