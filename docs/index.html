@@ -270,7 +270,7 @@
     <div class="sec-head"><span class="sec-no">01</span><h2>The problem and the method</h2><span class="rule"></span></div>
 
     <div class="fblock"><span class="tag">Basis-pursuit denoise — solved with secant level-set, not plain bisection</span>
-min&nbsp; ‖x‖₁&nbsp; s.t.&nbsp; ‖Ax − b‖₂ ≤ δ,&nbsp;&nbsp; x ∈ ℝⁿ</div>
+<span class="n">min</span>&nbsp;&nbsp;‖x‖₁<br><span class="n">s.t.</span>&nbsp;‖Ax − b‖₂ ≤ δ</div>
 
     <p class="lead">SMOP implements the <span class="math">sieving-based secant level-set method</span>
     of Li, Sun &amp; Yuan (2024): it walks the Lasso path
@@ -278,12 +278,12 @@ min&nbsp; ‖x‖₁&nbsp; s.t.&nbsp; ‖Ax − b‖₂ ≤ δ,&nbsp;&nbsp; x �
     <span class="math">ψ(μ) = ‖Ax(μ)−b‖ = δ</span> with a fast outer secant loop — no plain bisection —
     while <strong>adaptive sieving</strong> keeps every inner Lasso solve on a small active set.</p>
 
+    <p class="lead">Its three ingredients: a fast <strong>secant</strong> outer loop,
+    <strong>adaptive sieving</strong>, and <strong>fast inner solvers</strong>.</p>
     <div class="pipe">
-      <div class="step"><span class="n">1</span><h4>Level-set loop</h4><p>Root-finding on ψ(μ)−δ = 0: secant steps (default) with analytic Newton and guarded bisection fallback, validated every iteration.</p></div>
-      <div class="sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="step"><span class="n">1</span><h4>Fast secant level-set loop</h4><p>Root-finding on ψ(μ)−δ = 0: secant steps (default) with analytic Newton and guarded bisection fallback, validated every iteration.</p></div>
       <div class="step"><span class="n">2</span><h4>Adaptive sieving</h4><p>Each Lasso subproblem is warm-started on a small active set and augmented from the KKT residual, following the reference control_addpram budget.</p></div>
-      <div class="sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-      <div class="step"><span class="n">3</span><h4>Inner solvers</h4><p>Three solvers with a strict preference order — smoothing Newton, then SSNAL, and ADMM only as a last resort.</p></div>
+      <div class="step"><span class="n">3</span><h4>Fast inner solvers</h4><p>Smoothing Newton and SSNAL, chosen by subproblem shape, keep each KKT solve fast; ADMM only as a last resort.</p></div>
     </div>
 
     <h3>Inner-solver dispatch</h3>
