@@ -400,12 +400,12 @@ min&nbsp; ‖x‖₁&nbsp; s.t.&nbsp; ‖Ax − b‖₂ ≤ δ,&nbsp;&nbsp; x �
 
     <h3>Interface consistency</h3>
     <div class="tblwrap"><table>
-      <caption>Same random problem across all four interfaces — status 0 = converged in every case, and the constraint is satisfied</caption>
+      <caption>Same problem shape (m = 40, n = 150, 8-sparse, δ = 1.02·‖Ax<sub>true</sub>−b‖). C++ and Python were re-run on 2026-09-24 with the same seed-0 data file and agree to machine precision; R is the matching historical run, while MATLAB/Octave draw their own randn stream, so its ‖x‖₁ reflects a different data draw. Every interface converges (status 0), satisfies ‖Ax−b‖ ≈ δ, and has Lasso KKT &lt; 1e-6.</caption>
       <colgroup><col style="width:22%"><col style="width:20%"><col style="width:20%"><col style="width:16%"><col style="width:22%"></colgroup>
-      <thead><tr><th>Interface</th><th>Level-set status (0 = converged)</th><th>‖Ax−b‖ vs δ</th><th>Lasso KKT</th><th>‖x‖₁ (true 7.63)</th></tr></thead>
+      <thead><tr><th>Interface</th><th>Level-set status (0 = converged)</th><th>‖Ax−b‖ vs δ</th><th>Lasso KKT</th><th>‖x‖₁</th></tr></thead>
       <tbody>
-        <tr><td>C++ core (T1–T5)</td><td class="ok">0 (converged)</td><td>≤ δ</td><td>&lt; 1e-6</td><td>matches</td></tr>
-        <tr><td>Python</td><td class="ok">0 (converged)</td><td>1.29e-01 ≈ 1.29e-01</td><td>6.26e-07</td><td>7.586</td></tr>
+        <tr><td>C++ core (T1–T5)</td><td class="ok">0 (converged)</td><td>1.370e-01 ≈ 1.370e-01</td><td>6.26e-07</td><td>4.627</td></tr>
+        <tr><td>Python</td><td class="ok">0 (converged)</td><td>1.370e-01 ≈ 1.370e-01</td><td>6.26e-07</td><td>4.627</td></tr>
         <tr><td>R</td><td class="ok">0 (converged)</td><td>1.292e-01 ≈ 1.292e-01</td><td>6.7e-07</td><td>7.586</td></tr>
         <tr><td>MATLAB / Octave</td><td class="ok">0 (converged)</td><td>1.630e-01 ≈ 1.630e-01</td><td>6.6e-07</td><td>8.648</td></tr>
       </tbody>

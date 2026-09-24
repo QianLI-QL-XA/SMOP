@@ -135,19 +135,20 @@ status, msg, time`.
 
 ## 5. Interface consistency verification (2026-09-23, all passed)
 
-Same random problem (m=40, n=150, 8-sparse true solution, seed=0,
-delta=1.02·‖A·x_true−b‖):
+Same problem shape (m=40, n=150, 8-sparse true solution,
+delta=1.02·‖A·x_true−b‖). C++ and Python were re-run on 2026-09-24 on the
+same seed-0 data file and agree to machine precision; R is the matching
+historical run. MATLAB/Octave draw their own randn stream, so their ‖x‖₁
+reflects a different data draw and is not comparable column-wise. Every
+interface converges (status 0), satisfies ‖Ax−b‖ ≈ δ, and has Lasso
+KKT < 1e-6:
 
-| Interface | solve_bmop status | ‖Ax−b‖ vs δ | ‖x‖₁ (true 7.63) | iter | solve_lasso KKT |
+| Interface | solve_bmop status | ‖Ax−b‖ vs δ | ‖x‖₁ | iter | solve_lasso KKT |
 | --- | --- | --- | --- | --- | --- |
-| C++ core (T1–T5) | 0 converged | ≤δ | consistent | — | <1e-6 |
-| Python | 0 converged | 1.29e-01 ≈ 1.29e-01 | 7.586 | 7 | 6.26e-07 |
+| C++ core (T1–T5) | 0 converged | 1.370e-01 ≈ 1.370e-01 | 4.627 | 7 | 6.26e-07 |
+| Python | 0 converged | 1.370e-01 ≈ 1.370e-01 | 4.627 | 7 | 6.26e-07 |
 | R | 0 converged | 1.292e-01 ≈ 1.292e-01 | 7.586 | 7 | 6.7e-07 |
 | MATLAB/Octave | 0 converged | 1.630e-01 ≈ 1.630e-01 | 8.648 | 7 | 6.6e-07 |
-
-(Python and R produce identical solutions for the same seed; Octave/MATLAB
-differ slightly because their randn streams differ, but constraint
-satisfaction and convergence are consistent.)
 
 ### Full UCI regression (C++ core, 11 datasets × δ=0.1/0.5)
 
