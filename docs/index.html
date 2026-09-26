@@ -92,9 +92,9 @@
   @media (prefers-reduced-motion:reduce){header::after{animation:none}}
   .hero{position:relative;z-index:1}
   .hero-fig svg .flow{filter:drop-shadow(0 0 5px rgba(79,184,178,.55))}
-  .hero-fig .mu-dot{transform-box:fill-box;transform-origin:center;filter:drop-shadow(0 0 4px rgba(79,184,178,.9))}
-  .hero-fig .mu-halo{animation:muPulse 2.8s ease-out infinite}
-  .hero-fig .mu-core{animation:muBreath 2.8s ease-in-out infinite}
+  .hero-fig .mu-dot{filter:drop-shadow(0 0 4px rgba(79,184,178,.9))}
+  .hero-fig .mu-halo{transform-box:fill-box;transform-origin:center;animation:muPulse 2.8s ease-out infinite}
+  .hero-fig .mu-core{transform-box:fill-box;transform-origin:center;animation:muBreath 2.8s ease-in-out infinite}
   @keyframes muPulse{0%{transform:scale(1);opacity:.7}70%{transform:scale(2.7);opacity:0}100%{transform:scale(1);opacity:.7}}
   @keyframes muBreath{0%,100%{opacity:1}50%{opacity:.6}}
   @media (prefers-reduced-motion:reduce){.hero-fig .mu-halo,.hero-fig .mu-core{animation:none}}
