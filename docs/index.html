@@ -92,6 +92,12 @@
   @media (prefers-reduced-motion:reduce){header::after{animation:none}}
   .hero{position:relative;z-index:1}
   .hero-fig svg .flow{filter:drop-shadow(0 0 5px rgba(79,184,178,.55))}
+  .hero-fig .mu-dot{transform-box:fill-box;transform-origin:center;filter:drop-shadow(0 0 4px rgba(79,184,178,.9))}
+  .hero-fig .mu-halo{animation:muPulse 2.8s ease-out infinite}
+  .hero-fig .mu-core{animation:muBreath 2.8s ease-in-out infinite}
+  @keyframes muPulse{0%{transform:scale(1);opacity:.7}70%{transform:scale(2.7);opacity:0}100%{transform:scale(1);opacity:.7}}
+  @keyframes muBreath{0%,100%{opacity:1}50%{opacity:.6}}
+  @media (prefers-reduced-motion:reduce){.hero-fig .mu-halo,.hero-fig .mu-core{animation:none}}
   .hero-fig svg .flowline{stroke-dasharray:7 6;animation:dash 2.6s linear infinite}
   @keyframes dash{to{stroke-dashoffset:-26}}
   @media (max-width:860px){.hero{grid-template-columns:1fr;padding:36px 22px}.hero-fig{max-width:480px;margin:0 auto}}
@@ -270,6 +276,7 @@
         <text x="312" y="100" fill="#E8C4A0" font-size="12" font-family="IBM Plex Mono, monospace">δ</text>
         <line x1="288" y1="96" x2="288" y2="208" stroke="#7FD0CA" stroke-width="1.1" stroke-dasharray="4 4"/>
         <text x="288" y="228" fill="#7FD0CA" font-size="12" font-family="IBM Plex Mono, monospace">μ*</text>
+        <g class="mu-dot"><circle class="mu-halo" cx="288" cy="96" r="4.5" fill="none" stroke="#4FB8B2" stroke-width="1.5"/><circle class="mu-core" cx="288" cy="96" r="3.4" fill="#4FB8B2"/></g>
         <text x="262" y="82" fill="#DFEEF2" font-size="12.5" font-family="IBM Plex Mono, monospace">ψ(μ*)=δ</text>
         <text x="42" y="176" fill="#7C93A1" font-size="11.5" font-family="IBM Plex Mono, monospace">ψ(μ)=‖Ax(μ)−b‖</text>
       </svg>
