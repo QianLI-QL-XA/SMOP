@@ -47,10 +47,16 @@
   header{position:relative;background:radial-gradient(1200px 640px at 50% -12%,rgba(53,179,172,.17),transparent 62%),var(--hero-bg);color:var(--hero-ink);min-height:100vh;display:flex;align-items:center;overflow:hidden}
   /* HUD-style grid inside the hero */
   header::before{content:"";position:absolute;inset:0;pointer-events:none;
-    background-image:linear-gradient(rgba(79,184,178,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(79,184,178,.06) 1px,transparent 1px);
-    background-size:46px 46px;
-    -webkit-mask-image:radial-gradient(ellipse 80% 65% at 50% 26%,#000 22%,transparent 72%);
-    mask-image:radial-gradient(ellipse 80% 65% at 50% 26%,#000 22%,transparent 72%);}
+    background-image:
+      radial-gradient(circle,rgba(79,184,178,.16) 1px,transparent 1.7px),
+      linear-gradient(rgba(79,184,178,.08) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(79,184,178,.08) 1px,transparent 1px),
+      linear-gradient(rgba(79,184,178,.03) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(79,184,178,.03) 1px,transparent 1px);
+    background-size:46px 46px,46px 46px,46px 46px,11.5px 11.5px,11.5px 11.5px;
+    background-position:23px 23px,0 0,0 0,0 0,0 0;
+    -webkit-mask-image:radial-gradient(ellipse 82% 70% at 50% 30%,#000 18%,transparent 74%);
+    mask-image:radial-gradient(ellipse 82% 70% at 50% 30%,#000 18%,transparent 74%);}
   .hero{position:relative;width:100%;max-width:1600px;margin:0 auto;padding:64px 32px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(440px,740px);gap:56px;align-items:center}
   .hero>div:first-child{display:flex;flex-direction:column;justify-content:center}
   .hero .kicker{font-family:var(--font-mono);font-size:14px;letter-spacing:.08em;color:#7FB5C2;text-transform:none;margin:0 0 40px;text-align:center}
@@ -74,11 +80,7 @@
   .hero-fig .cap{font-size:12.5px;color:#7C93A1;margin-top:8px;text-align:center}
   .hero-fig .visits{margin-top:38px;font-family:var(--font-sans);font-size:19px;color:#B7C7CF;letter-spacing:.03em;text-align:center;line-height:1.9}
   .hero-fig .visits img{height:24px;width:auto;vertical-align:middle;display:inline-block;margin:0 2px}
-  .hero-wave{position:absolute;left:0;right:0;bottom:0;height:40vh;min-height:180px;z-index:0;pointer-events:none;overflow:hidden;
-    -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 58%);mask-image:linear-gradient(180deg,transparent 0%,#000 58%)}
-  .hero-wave svg{width:100%;height:100%;display:block}
   .hero{position:relative;z-index:1}
-  @media (max-width:860px){.hero-wave{height:30vh;min-height:150px}}
   .hero-fig svg .flow{filter:drop-shadow(0 0 5px rgba(79,184,178,.55))}
   .hero-fig svg .flowline{stroke-dasharray:7 6;animation:dash 2.6s linear infinite}
   @keyframes dash{to{stroke-dashoffset:-26}}
@@ -225,7 +227,6 @@
 
 <!-- ===== 视图：Home（导航页） ===== -->
 <header id="home">
-  <div class="hero-wave" aria-hidden="true"><svg viewBox="0 0 1440 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 172.6 L6 177.1 L11 164.1 L17 179.1 L22 167.1 L28 171.5 L33 179.5 L39 167.8 L44 180.0 L50 169.7 L56 179.2 L61 164.8 L67 134.5 L72 102.4 L78 99.0 L83 74.8 L89 62.5 L95 75.9 L100 107.1 L106 133.5 L111 140.1 L117 179.8 L122 158.7 L128 173.5 L133 177.2 L139 177.9 L145 173.0 L150 159.8 L156 176.3 L161 165.9 L167 164.4 L172 171.3 L178 166.8 L183 179.3 L189 179.4 L195 170.4 L200 140.5 L206 129.4 L211 114.7 L217 95.3 L222 116.4 L228 138.0 L234 142.8 L239 162.8 L245 174.6 L250 166.1 L256 167.3 L261 158.3 L267 162.0 L272 173.5 L278 155.5 L284 177.9 L289 170.1 L295 161.3 L300 177.0 L306 168.3 L311 180.0 L317 163.6 L322 161.1 L328 166.1 L334 158.3 L339 172.8 L345 162.9 L350 165.6 L356 165.9 L361 153.2 L367 122.6 L373 99.1 L378 90.6 L384 65.0 L389 62.9 L395 66.9 L400 89.0 L406 100.8 L411 125.9 L417 160.6 L423 171.0 L428 163.6 L434 180.4 L439 169.0 L445 176.6 L450 177.9 L456 179.4 L461 161.0 L467 177.6 L473 174.6 L478 170.8 L484 158.4 L489 178.9 L495 161.8 L500 141.5 L506 115.1 L512 99.1 L517 80.2 L523 104.6 L528 118.8 L534 138.0 L539 142.0 L545 156.1 L550 177.1 L556 176.4 L562 175.0 L567 174.9 L573 168.4 L578 165.7 L584 174.2 L589 180.9 L595 170.1 L600 171.4 L606 166.3 L612 156.2 L617 163.1 L623 167.6 L628 164.9 L634 163.4 L639 179.6 L645 157.6 L651 160.7 L656 158.3 L662 160.3 L667 153.6 L673 133.3 L678 121.0 L684 87.1 L689 81.9 L695 89.0 L701 105.4 L706 126.7 L712 142.1 L717 169.6 L723 181.0 L728 177.1 L734 178.3 L739 171.5 L745 180.3 L751 158.3 L756 165.0 L762 177.1 L767 174.4 L773 172.0 L778 171.5 L784 177.8 L789 158.9 L795 155.2 L801 168.9 L806 168.4 L812 178.8 L817 167.2 L823 144.3 L828 129.6 L834 98.2 L840 124.9 L845 145.2 L851 137.8 L856 165.5 L862 177.2 L867 166.9 L873 180.3 L878 167.3 L884 155.6 L890 158.6 L895 162.9 L901 174.2 L906 171.5 L912 176.6 L917 160.9 L923 167.2 L928 160.8 L934 172.4 L940 175.2 L945 159.9 L951 155.4 L956 158.8 L962 160.1 L967 159.7 L973 161.8 L979 167.1 L984 139.5 L990 123.6 L995 112.0 L1001 91.9 L1006 65.3 L1012 73.9 L1017 82.7 L1023 95.9 L1029 129.2 L1034 136.6 L1040 155.3 L1045 156.2 L1051 171.5 L1056 175.3 L1062 175.1 L1067 175.9 L1073 175.7 L1079 164.8 L1084 157.6 L1090 159.2 L1095 168.5 L1101 164.0 L1106 160.2 L1112 178.8 L1118 163.8 L1123 157.4 L1129 160.7 L1134 161.5 L1140 168.6 L1145 165.5 L1151 132.0 L1156 126.1 L1162 96.3 L1168 81.6 L1173 114.2 L1179 131.8 L1184 135.3 L1190 158.8 L1195 176.6 L1201 177.7 L1206 177.1 L1212 157.5 L1218 160.0 L1223 177.2 L1229 159.5 L1234 155.5 L1240 163.9 L1245 171.9 L1251 166.7 L1257 177.6 L1262 180.6 L1268 155.8 L1273 164.1 L1279 167.3 L1284 156.7 L1290 169.7 L1295 158.3 L1301 142.3 L1307 139.1 L1312 119.0 L1318 98.7 L1323 81.0 L1329 80.4 L1334 108.0 L1340 123.0 L1345 149.6 L1351 148.6 L1357 171.8 L1362 169.1 L1368 165.8 L1373 157.5 L1379 170.1 L1384 157.2 L1390 168.0 L1396 167.2 L1401 167.4 L1407 180.5 L1412 169.6 L1418 176.2 L1423 180.9 L1429 160.2 L1434 176.5 L1440 168.7" fill="none" stroke="#9FB2BE" stroke-width="1.4" opacity="0.45"/><g opacity="0.78" stroke="#4FB8B2" stroke-width="2.6" stroke-linecap="round"><path d="M86 168.0 L86 55.9 M216 168.0 L216 94.8 M389 168.0 L389 50.0 M518 168.0 L518 85.4 M691 168.0 L691 64.2 M835 168.0 L835 103.1 M1008 168.0 L1008 53.5 M1166 168.0 L1166 90.1 M1325 168.0 L1325 68.9 " fill="none"/></g><g fill="#4FB8B2" stroke="none" opacity="0.85"><circle cx="86" cy="55.9" r="2.6"/><circle cx="216" cy="94.8" r="2.6"/><circle cx="389" cy="50.0" r="2.6"/><circle cx="518" cy="85.4" r="2.6"/><circle cx="691" cy="64.2" r="2.6"/><circle cx="835" cy="103.1" r="2.6"/><circle cx="1008" cy="53.5" r="2.6"/><circle cx="1166" cy="90.1" r="2.6"/><circle cx="1325" cy="68.9" r="2.6"/></g></svg></div>
   <div class="hero">
     <div>
       <p class="kicker">Header-only C++17 · Python / R / MATLAB interfaces · optional CUDA</p>
