@@ -80,6 +80,16 @@
   .hero-fig .cap{font-size:12.5px;color:#7C93A1;margin-top:8px;text-align:center}
   .hero-fig .visits{margin-top:38px;font-family:var(--font-sans);font-size:19px;color:#B7C7CF;letter-spacing:.03em;text-align:center;line-height:1.9}
   .hero-fig .visits img{height:24px;width:auto;vertical-align:middle;display:inline-block;margin:0 2px}
+  header::after{content:"";position:absolute;inset:-25% 0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(36% 30% at 28% 22%,rgba(79,184,178,.16),transparent 70%),
+      radial-gradient(30% 26% at 74% 58%,rgba(62,130,224,.12),transparent 72%),
+      radial-gradient(26% 22% at 52% 86%,rgba(79,184,178,.10),transparent 70%);
+    animation:smopflow 24s ease-in-out infinite alternate;will-change:transform}
+  @keyframes smopflow{
+    0%{transform:translate3d(-3.2%,-1.8%,0) scale(1)}
+    100%{transform:translate3d(3.2%,2.2%,0) scale(1.04)}}
+  @media (prefers-reduced-motion:reduce){header::after{animation:none}}
   .hero{position:relative;z-index:1}
   .hero-fig svg .flow{filter:drop-shadow(0 0 5px rgba(79,184,178,.55))}
   .hero-fig svg .flowline{stroke-dasharray:7 6;animation:dash 2.6s linear infinite}
