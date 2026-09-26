@@ -76,6 +76,14 @@
   .hero-fig .visits img{height:24px;width:auto;vertical-align:middle;display:inline-block;margin:0 2px}
   .hero-fig svg .flow{filter:drop-shadow(0 0 5px rgba(79,184,178,.55))}
   .hero-fig svg .flowline{stroke-dasharray:7 6;animation:dash 2.6s linear infinite}
+  .hero-fig svg .anim-dot,.hero-fig svg .anim-line{opacity:0;transition:opacity .28s ease}
+  .hero-fig svg .anim-dot.on,.hero-fig svg .anim-line.on{opacity:1}
+  .hero-fig svg .anim-line.chord{stroke:#4FB8B2;stroke-width:1.6;stroke-dasharray:5 4}
+  .hero-fig svg .anim-line.vref{stroke:#7FD0CA;stroke-width:1.1;stroke-dasharray:4 4}
+  .hero-fig svg .anim-dot.xint{fill:#E8C4A0}
+  .hero-fig svg .anim-dot.pulse{animation:pulse 1.15s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @media (prefers-reduced-motion: reduce){.hero-fig svg .anim-dot,.hero-fig svg .anim-line{opacity:0;transition:none}}
   @keyframes dash{to{stroke-dashoffset:-26}}
   @media (max-width:860px){.hero{grid-template-columns:1fr;padding:36px 22px}.hero-fig{max-width:480px;margin:0 auto}}
 
@@ -259,6 +267,7 @@
         <text x="288" y="228" fill="#7FD0CA" font-size="12" font-family="IBM Plex Mono, monospace">μ*</text>
         <text x="262" y="82" fill="#DFEEF2" font-size="12.5" font-family="IBM Plex Mono, monospace">ψ(μ*)=δ</text>
         <text x="42" y="176" fill="#7C93A1" font-size="11.5" font-family="IBM Plex Mono, monospace">ψ(μ)=‖Ax(μ)−b‖</text>
+        <g id="hero-secant"></g>
 
       </svg>
       <div class="cap">Pareto frontier: the secant method roots ψ(μ) = δ in a few two-point-chord iterations, with adaptive sieving keeping each Lasso subproblem small</div>
@@ -775,6 +784,128 @@ disp(lr.eta)            % 6.6e-07</code></pre>
     window.addEventListener('resize', function(){ chart2.resize(); });
   }
   }
+
+
+  /* ---------- hero: secant-method iteration animation ---------- */
+  (function(){
+    var svg = document.querySelector('.hero-fig svg');
+    if (!svg) return;
+    var p = svg.querySelector('path.flow');
+    if (!p) return;
+    var d = p.getAttribute('d');
+    var pts = [];
+    d.replace(/[ML]\s*([\d.]+)[\s,]+([\d.]+)/g, function(m,a,b){ pts.push([+a,+b]); });
+    if (pts.length < 4) return;
+    var reduced = false;
+    try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
+    if (reduced) return;
+
+    function psi(x){
+      if (x <= pts[0][0]) return pts[0][1];
+      if (x >= pts[pts.length-1][0]) return pts[pts.length-1][1];
+      for (var i=1;i<pts.length;i++){
+        if (x <= pts[i][0]){
+          var x0=pts[i-1][0], y0=pts[i-1][1], x1=pts[i][0], y1=pts[i][1];
+          return y0+(y1-y0)*(x-x0)/(x1-x0);
+        }
+      }
+      return pts[pts.length-1][1];
+    }
+    var DELTA = 96;
+    var NS = 'http://www.w3.org/2000/svg';
+    var g = document.getElementById('hero-secant');
+    if (!g) return;
+
+    function mk(tag, attrs){
+      var el = document.createElementNS(NS, tag);
+      for (var k in attrs) el.setAttribute(k, attrs[k]);
+      return el;
+    }
+    function dot(x, y, extra){
+      var a = {cx:x, cy:y, r:3.4, fill:'#4FB8B2', 'class':'anim-dot'};
+      for (var k in extra||{}) a[k]=extra[k];
+      var el = mk('circle', a);
+      g.appendChild(el); return el;
+    }
+    function chord(x1,y1,x2,y2){
+      var el = mk('line', {x1:x1, y1:y1, x2:x2, y2:y2, 'class':'anim-line chord'});
+      g.appendChild(el); return el;
+    }
+    function vref(x,y1,y2){
+      var el = mk('line', {x1:x, y1:y1, x2:x, y2:y2, 'class':'anim-line vref'});
+      g.appendChild(el); return el;
+    }
+    function lab(x,y,txt,dx){
+      var el = mk('text', {x:x+(dx||0), y:y, fill:'#7FD0CA', 'font-size':'10.5',
+        'font-family':'IBM Plex Mono, monospace', 'class':'anim-dot'});
+      el.textContent = txt;
+      g.appendChild(el); return el;
+    }
+    function show(el){ el.classList.add('on'); }
+
+    /* secant trajectory on the actual curve: x0, x1, then superlinear convergence */
+    var xs = [240, 270], ys = [psi(240), psi(270)];
+    for (var k=0;k<8;k++){
+      var n2 = xs.length;
+      var xn = xs[n2-1] - (ys[n2-1]-DELTA)*(xs[n2-1]-xs[n2-2])/(ys[n2-1]-ys[n2-2]);
+      xs.push(xn); ys.push(psi(xn));
+      if (Math.abs(ys[ys.length-1]-DELTA) < 0.6) break;
+    }
+    /* secant-chord x-intersection with y=DELTA between curve points i-1 and i */
+    function xint(i){
+      var xa=xs[i-1], ya=ys[i-1], xb=xs[i], yb=ys[i];
+      return xa + (DELTA-ya)*(xb-xa)/(yb-ya);
+    }
+
+    var timers = [];
+    function play(){
+      var t = 0;
+      function at(dt, fn){ timers.push(setTimeout(fn, t+=dt)); }
+      var n = xs.length;
+      var d0 = dot(xs[0], ys[0]);
+      at(0, function(){ show(d0); });
+      var d1 = dot(xs[1], ys[1]);
+      at(420, function(){ show(d1); });
+      var lastEl = null;
+      for (var i=1;i<n;i++){
+        (function(i){
+          var xi = xint(i);
+          var L = chord(xs[i-1], ys[i-1], xi, DELTA);
+          at(420, function(){ show(L); });
+          var xiD = dot(xi, DELTA, {'class':'anim-dot xint', r:3.0});
+          at(300, function(){ show(xiD); });
+          var py = (i+1 < n) ? ys[i+1] : DELTA;
+          var v = vref(xi, DELTA, py);
+          at(300, function(){ show(v); });
+          if (i < n-1){
+            var dN = dot(xi, py);
+            at(300, function(){ show(dN); });
+            if (i <= 2){
+              var lb = lab(xi, DELTA+13, '\u03bc' + i, 4);
+              at(0, function(){ show(lb); });
+            }
+            lastEl = dN;
+          }
+          var _i = i;
+          at(300, function(){
+            if (_i === n-1){
+              lastEl.setAttribute('r', 5.2);
+              lastEl.classList.add('pulse');
+              var f = lab(xi, ys[_i]-11, '\u03bc* = \u03bc' + _i, -6);
+              show(f);
+              setTimeout(function(){ f.classList.remove('on'); }, 1500);
+            }
+          });
+        })(i);
+      }
+      at(1700, function(){ reset(); play(); });
+    }
+    function reset(){
+      timers.forEach(clearTimeout); timers = [];
+      while (g.firstChild) g.removeChild(g.firstChild);
+    }
+    play();
+  })();
 
   (function(){
     if (window.echarts) { initWallClockChart(); return; }
