@@ -66,7 +66,7 @@
     text-shadow:0 0 46px rgba(79,184,178,.22)}
   .hero .sub{font-size:19.5px;line-height:1.8;color:var(--hero-soft);max-width:56ch;margin:0 auto 80px}
   .hero .sub .hl{color:#4FB8B2;font-weight:600;font-style:normal}
-  .hero .eq{display:block;width:fit-content;max-width:100%;margin:0 auto 80px;background:rgba(53,179,172,.09);border:1px solid rgba(79,184,178,.38);border-radius:10px;padding:18px 28px;font-family:var(--font-mono);font-size:clamp(30px,3.4vw,48px);line-height:1.25;color:#DFEEF2;box-shadow:0 0 30px rgba(53,179,172,.12)}
+  .hero .eq{display:block;width:fit-content;max-width:100%;margin:0 auto 80px;background:rgba(53,179,172,.09);border:1px solid rgba(79,184,178,.38);border-radius:10px;padding:18px 28px;font-family:var(--font-mono);font-size:clamp(25px,2.8vw,40px);line-height:1.25;color:#DFEEF2;box-shadow:0 0 30px rgba(53,179,172,.12)}
   .hero .ref{margin:0 auto 30px;font-size:15.5px;line-height:1.7;color:#9FB2BE;max-width:60ch}
   .hero .ref a{color:#7FD0CA}
   .badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -90,9 +90,6 @@
     0%{transform:translate3d(-3.2%,-1.8%,0) scale(1)}
     100%{transform:translate3d(3.2%,2.2%,0) scale(1.04)}}
   @media (prefers-reduced-motion:reduce){header::after{animation:none}}
-  .hero-sparse{position:absolute;inset:0;z-index:0;pointer-events:none}
-  .hero-sparse i{position:absolute;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:rgba(79,184,178,.8);box-shadow:0 0 7px rgba(79,184,178,.45)}
-  .hero-sparse i.s{width:5px;height:5px;margin:-2.5px 0 0 -2.5px;background:rgba(79,184,178,.48);box-shadow:0 0 4px rgba(79,184,178,.28)}
   .hero{position:relative;z-index:1}
   .hero-fig svg .flow{filter:drop-shadow(0 0 5px rgba(79,184,178,.55))}
   .hero-fig .mu-dot{filter:drop-shadow(0 0 4px rgba(79,184,178,.9))}
@@ -246,7 +243,6 @@
 
 <!-- ===== 视图：Home（导航页） ===== -->
 <header id="home">
-<div class="hero-sparse" aria-hidden="true"><i style="left:989px;top:1127px"></i><i style="left:667px;top:989px"></i><i style="left:851px;top:483px"></i><i style="left:575px;top:943px"></i><i style="left:1081px;top:299px"></i><i class="s" style="left:1173px;top:805px"></i><i class="s" style="left:1265px;top:161px"></i><i class="s" style="left:69px;top:805px"></i><i class="s" style="left:23px;top:667px"></i><i class="s" style="left:1081px;top:529px"></i><i class="s" style="left:897px;top:69px"></i><i class="s" style="left:1127px;top:759px"></i><i class="s" style="left:1035px;top:253px"></i><i class="s" style="left:1219px;top:115px"></i><i class="s" style="left:1081px;top:391px"></i><i class="s" style="left:299px;top:851px"></i><i class="s" style="left:897px;top:483px"></i><i class="s" style="left:1219px;top:69px"></i><i class="s" style="left:943px;top:943px"></i><i class="s" style="left:621px;top:943px"></i></div>
   <div class="hero">
     <div>
       <p class="kicker">Header-only C++17 · Python / R / MATLAB interfaces · optional CUDA</p>
